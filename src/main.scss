@@ -72,12 +72,11 @@
         width: auto;
         width: 100%;
         box-sizing: border-box;
+        left: 50%;
+        transform: translateX(-50%);
         @media #{$tablet} {
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
             width: $modal-md;
-
+            top: 1%;
             // This style will be effect only starting from tablet resolution
             &.#{$modal-prefix} {
                 &-sm {
