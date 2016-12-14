@@ -258,7 +258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }), _react2.default.createElement('div', {
 	                key: 'zvui-modal',
 	                ref: 'zvui-modal-inner',
-	                className: (0, _classnames2.default)(prefix + '-dialog', dialogClassName, classes, (_cn = {}, _defineProperty(_cn, prefix + '-sm', props.small), _defineProperty(_cn, prefix + '-lg', props.large), _cn))
+	                className: (0, _classnames2.default)(prefix + '-dialog', dialogClassName, classes, (_cn = {}, _defineProperty(_cn, prefix + '-sm', props.small), _defineProperty(_cn, prefix + '-md', props.medium), _defineProperty(_cn, prefix + '-lg', props.large), _cn))
 	            }, _react2.default.createElement('div', {
 	                className: prefix + '-content'
 	            }, children)));
@@ -275,7 +275,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                onHide: props.onHide,
 	                onShow: props.onShow,
 	                backdropStyle: backdrop,
-	                backdropClassName: PREFIX + '-backdrop',
+	                backdropClassName: (0, _classnames2.default)(PREFIX + '-backdrop', {
+	                    in: props.show
+	                }),
 	                containerClassName: PREFIX + '-open'
 	            }, modal);
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
@@ -2456,7 +2458,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return _react2.default.createElement('div', _extends({}, props, {
 	                className: (0, _classnames2.default)(className, prefix + '-header')
 	            }), closeButton && _react2.default.createElement(_ZvuiModalDismiss2.default, {
-	                className: prefix + '-close'
+	                className: (0, _classnames2.default)(prefix + '-close', {
+	                    'outside': !children || props.outside
+	                })
 	            }, _react2.default.createElement('span', null, '\xD7')), children);
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
@@ -2572,6 +2576,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	ZvuiModalDismiss.defaultProps = {
 	    component: 'button'
+	};
+	ZvuiModalDismiss.contextTypes = {
+	    onModalHide: _react.PropTypes.func
 	};
 	exports.default = ZvuiModalDismiss;
 

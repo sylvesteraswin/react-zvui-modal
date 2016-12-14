@@ -14,21 +14,22 @@ $screen-md:                  992px;
 $screen-md-min:              $screen-md;
 
 
-$close-font-weight:           bold;
+$close-font-weight:           300;
 $close-color:                 #000;
-$close-text-shadow:           0 1px 0 #fff;
 
-$modal-inner-padding:         15px;
+$modal-inner-padding:         0 31px 42px 31px;
 
-$modal-title-padding:         15px;
+$modal-title-padding:         42px 31px;
 $modal-title-line-height:     $line-height-base;
+
+$modal-title-font-size:       24px;
 
 $modal-content-bg:            #fff;
 $modal-content-border-color:  rgba(0,0,0,.2);
 $modal-content-fallback-border-color:  #999;
 
-$modal-backdrop-bg:           #000;
-$modal-backdrop-opacity:      .5;
+$modal-backdrop-bg:           rgba(243, 243, 244, .85);
+$modal-backdrop-opacity:      1;
 $modal-header-border-color:   #e5e5e5;
 $modal-footer-border-color:   $modal-header-border-color;
 

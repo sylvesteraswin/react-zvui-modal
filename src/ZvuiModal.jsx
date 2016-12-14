@@ -150,6 +150,7 @@ class ZvuiModal extends Component {
                         dialogClassName,
                         classes, {
                             [`${prefix}-sm`]: props.small,
+                            [`${prefix}-md`]: props.medium,
                             [`${prefix}-lg`]: props.large,
                         }
                     )}
@@ -177,7 +178,9 @@ class ZvuiModal extends Component {
                 onHide={props.onHide}
                 onShow={props.onShow}
                 backdropStyle={backdrop}
-                backdropClassName={`${PREFIX}-backdrop`}
+                backdropClassName={cn(`${PREFIX}-backdrop`, {
+                    in: props.show,
+                })}
                 containerClassName={`${PREFIX}-open`}
             >
                 {modal}

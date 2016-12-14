@@ -173,7 +173,6 @@ class Modal extends Component {
         const {
             backdropStyle,
             backdropClassName,
-            // renderBackdrop,
         } = this.props;
 
         const backdrop = (

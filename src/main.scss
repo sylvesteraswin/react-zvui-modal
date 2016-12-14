@@ -1,14 +1,15 @@
 @import "scss/variables";
+@import "scss/media";
 
 .#{$modal-prefix} {
     &-close {
         float: right;
         font-size: ($font-size-base * 1.5);
         font-weight: $close-font-weight;
-        line-height: 1;
         color: $close-color;
-        text-shadow: $close-text-shadow;
-        opacity: .2;
+        background: transparent;
+        border: none;
+        outline: 0;
 
         &:hover,
         &:focus {
@@ -25,13 +26,20 @@
             border: 0;
             -webkit-appearance: none;
         }
+
+        @media #{$tablet} {
+            &.outside {
+                position: absolute;
+                left: 101%;
+                top: 0;
+            }
+        }
     }
 
     &-open {
         overflow: hidden;
     }
 
-    display: none;
     overflow: hidden;
     position: fixed;
     top: 0;
@@ -41,9 +49,15 @@
     z-index: $zindex-modal;
     -webkit-overflow-scrolling: touch;
     outline: 0;
+    &.in {
+        opacity: 1;
+    }
 
     &.in #{$modal-prefix} {
-        transform: translate(0, 0);
+        &-dialog {
+            transform: translate(0, 0);
+
+        }
     }
 
     &-open {
@@ -56,15 +70,37 @@
     &-dialog {
         position: relative;
         width: auto;
-        margin: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        @media #{$tablet} {
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: $modal-md;
+
+            // This style will be effect only starting from tablet resolution
+            &.#{$modal-prefix} {
+                &-sm {
+                    width: $modal-sm;
+                }
+
+                &-md {
+                    width: $modal-md;
+                }
+
+                &-lg {
+                    width: $modal-lg;
+                }
+            }
+        }
+        @media #{$desktop} {
+            width: $modal-lg;
+        }
     }
 
     &-content {
-        position: relative;
+        position: relative;;
         background-color: $modal-content-bg;
-        border: 1px solid $modal-content-fallback-border-color;
-        border: 1px solid $modal-content-border-color;
-        box-shadow: 0 3px 9px rgba(0,0,0,.5);
         background-clip: padding-box;
         outline: 0;
     }
@@ -84,14 +120,19 @@
 
     &-header {
         padding: $modal-title-padding;
-        border-bottom: 1px solid $modal-header-border-color;
+        .#{$modal-prefix}-close {
+            margin-top: -2px;
+        }
     }
 
     &-title {
-
+        margin: 0;
+        padding: 0;
+        font-size: $modal-title-font-size;
     }
 
     &-body {
-
+        position: relative;
+        padding: $modal-inner-padding;
     }
 }

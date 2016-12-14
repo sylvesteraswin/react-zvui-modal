@@ -37,7 +37,9 @@ class ZvuiModalHeader extends Component {
                 {
                     closeButton &&
                     <ZvuiModalDismiss
-                        className={`${prefix}-close`}
+                        className={cn(`${prefix}-close`, {
+                            'outside': !children || props.outside,
+                        })}
                     >
                         <span>&times;</span>
                     </ZvuiModalDismiss>

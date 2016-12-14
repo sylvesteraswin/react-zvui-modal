@@ -26,15 +26,51 @@ class App extends Component {
             <section
                 className="app">
                 <ZvuiModal
+                    medium
                     show={this.state.open}
                     onHide={this.close}>
-                    <ZvuiModal.Header>
+                    <ZvuiModal.Header closeButton outside>
                         <ZvuiModal.Title>
                             Hello There
                         </ZvuiModal.Title>
                     </ZvuiModal.Header>
                     <ZvuiModal.Body>
-                        I am here and doing awesome
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
+                        <p>I am here and doing awesome</p>
                     </ZvuiModal.Body>
                 </ZvuiModal>
 

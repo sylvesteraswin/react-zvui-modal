@@ -17,6 +17,10 @@ class ZvuiModalDismiss extends Component {
         component: 'button',
     };
 
+    static contextTypes = {
+        onModalHide: PropTypes.func,
+    };
+
     render = () => {
         const {
             component: Tag, // eslint-disable-line no-unused-vars
