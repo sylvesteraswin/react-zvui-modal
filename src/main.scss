@@ -1,0 +1,97 @@
+@import "scss/variables";
+
+.#{$modal-prefix} {
+    &-close {
+        float: right;
+        font-size: ($font-size-base * 1.5);
+        font-weight: $close-font-weight;
+        line-height: 1;
+        color: $close-color;
+        text-shadow: $close-text-shadow;
+        opacity: .2;
+
+        &:hover,
+        &:focus {
+            color: $close-color;
+            text-decoration: none;
+            cursor: pointer;
+            opacity: .5;
+        }
+
+        button {
+            padding: 0;
+            cursor: pointer;
+            background: transparent;
+            border: 0;
+            -webkit-appearance: none;
+        }
+    }
+
+    &-open {
+        overflow: hidden;
+    }
+
+    display: none;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: $zindex-modal;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+
+    &.in #{$modal-prefix} {
+        transform: translate(0, 0);
+    }
+
+    &-open {
+        .#{$modal-prefix} {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+    }
+
+    &-dialog {
+        position: relative;
+        width: auto;
+        margin: 10px;
+    }
+
+    &-content {
+        position: relative;
+        background-color: $modal-content-bg;
+        border: 1px solid $modal-content-fallback-border-color;
+        border: 1px solid $modal-content-border-color;
+        box-shadow: 0 3px 9px rgba(0,0,0,.5);
+        background-clip: padding-box;
+        outline: 0;
+    }
+
+    &-backdrop {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: $zindex-modal-background;
+        background-color: $modal-backdrop-bg;
+        &.in {
+            opacity: $modal-backdrop-opacity;
+        }
+    }
+
+    &-header {
+        padding: $modal-title-padding;
+        border-bottom: 1px solid $modal-header-border-color;
+    }
+
+    &-title {
+
+    }
+
+    &-body {
+
+    }
+}

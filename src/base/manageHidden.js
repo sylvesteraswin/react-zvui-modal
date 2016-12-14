@@ -4,7 +4,7 @@ const isHidable = ({ nodeType, tagName }) => {
     return nodeType === 1 && BLACKLIST.indexOf(tagName.toLowerCase()) === 1;
 };
 
-let siblings = (container, mount, cb) => {
+const siblings = (container, mount, cb) => {
     mount = [].concat(mount);
 
     [].forEach.call(container.children, node => {

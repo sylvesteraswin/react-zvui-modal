@@ -1,15 +1,14 @@
 import React, {cloneElement, Component, PropTypes} from 'react';
 import componentOrElement from 'react-prop-types/lib/componentOrElement';
-import elementType from 'react-prop-types/lib/elementType';
 import warning from 'warning';
 
 import Teleport from 'react-teleport-me';
-import AttachHandler from 'react-attach-handler';
+import AttachHandler from 'react-attach-handler'; //eslint-disable-line no-unused-vars
 import ModalManager from './ModalManager';
 
-import {ownerDocumentFn, canUseDom, contains, getContainer, activeElement, scrollbarSize} from './helpers';
+import {ownerDocumentFn, canUseDom, contains, getContainer, activeElement} from './helpers';
 
-let modalManager = new ModalManager();
+const modalManager = new ModalManager();
 
 const NOOP = () => {};
 
@@ -35,6 +34,7 @@ const NOOP = () => {};
 
 class Modal extends Component {
     static propTypes = {
+        ...Teleport.propTypes,
         /**
          * A Node, Component instance, or function that returns either. The `container` will have the Portal children
          * appended to it.
@@ -53,7 +53,7 @@ class Modal extends Component {
         // Include a backdrop component
         backdrop: PropTypes.oneOfType([
             PropTypes.bool,
-            PropTypes.oneOf(['static'])
+            PropTypes.oneOf(['static']),
         ]),
         // Function that returns a backdrop component
         renderBackdrop: PropTypes.func,
@@ -97,7 +97,7 @@ class Modal extends Component {
         enforceFocus: true,
         onHide: NOOP,
         manager: modalManager,
-        renderBackdrop: (props) => <div {...props} />
+        renderBackdrop: (props) => <div {...props} />,
     };
 
     state = {
@@ -117,13 +117,14 @@ class Modal extends Component {
         }
     };
 
-    componentWillUpdate = () => {
+    componentWillUpdate = (nextProps) => {
         if (!this.props.show && nextProps.show) {
             this.checkForFocus();
         }
     };
 
     componentDidMount = () => {
+        this._isMounted = true;
         if (this.props.show) {
             this.onShow();
         }
@@ -142,19 +143,25 @@ class Modal extends Component {
     };
 
     componentWillUnmount = () => {
-        let {
+        const {
             show,
         } = this.props;
+
+        this._isMounted = false;
 
         if (show || !this.state.exited) {
             this.onHide();
         }
     };
 
+    isMounted = () => {
+        return this._isMounted;
+    };
+
     omitProps = (props, propTypes) => {
         const keys = Object.keys(props);
         const newProps = {};
-        keys.maps(prop => {
+        keys.map(prop => {
             if (!Object.prototype.hasOwnProperty.call(propTypes, prop)) {
                 newProps[prop] = props[prop];
             }
@@ -163,14 +170,13 @@ class Modal extends Component {
     };
 
     renderBackdrop = () => {
-        let {
+        const {
             backdropStyle,
             backdropClassName,
-            renderBackdrop,
-            show,
+            // renderBackdrop,
         } = this.props;
 
-        let backdrop = (
+        const backdrop = (
             <div
                 ref={ref => this.backdrop = ref}
                 style={backdropStyle}
@@ -182,8 +188,8 @@ class Modal extends Component {
     };
 
     onShow = () => {
-        let doc = ownerDocument(this);
-        let container = getContainer(this.props.container, doc.body);
+        const doc = ownerDocumentFn(this);
+        const container = getContainer(this.props.container, doc.body);
 
         this.props.manager.add(this, container, this.props.containerClassName);
 
@@ -199,7 +205,7 @@ class Modal extends Component {
         this.restoreLastFocus();
     };
 
-    setMountNode = () => {
+    setMountNode = (ref) => {
         this.mountNode = ref ? ref.getMountNode() : ref;
     };
 
@@ -224,7 +230,7 @@ class Modal extends Component {
         }
 
         if (this.props.backdrop === true) {
-            this.props.hide();
+            this.props.onHide();
         }
     };
 
@@ -244,13 +250,13 @@ class Modal extends Component {
     };
 
     focus = () => {
-        let {
+        const {
             autoFocus,
         } = this.props;
 
-        let modalContent = this.getDialogElement();
-        let current = activeElement(ownerDocument(this));
-        let focusInModal = current && contains(modalContent, current);
+        const modalContent = this.getDialogElement();
+        const current = activeElement(ownerDocumentFn(this));
+        const focusInModal = current && contains(modalContent, current);
 
         if (modalContent && autoFocus && !focusInModal) {
             this.lastFocus = current;
@@ -273,14 +279,16 @@ class Modal extends Component {
     };
 
     enforceFocus = () => {
-        let { enforceFocus } = this.props;
+        const {
+            enforceFocus,
+        } = this.props;
 
         if (!enforceFocus || !this.isMounted() || !this.isTopModal()) {
             return;
         }
 
-        let active = activeElement(ownerDocument(this));
-        let modal = this.getDialogElement();
+        const active = activeElement(ownerDocumentFn(this));
+        const modal = this.getDialogElement();
 
         if (modal && modal !== active && !contains(modal, active)) {
             modal.focus();
@@ -288,7 +296,7 @@ class Modal extends Component {
     };
 
     getDialogElement = () => {
-        let node = this.refs.modal;
+        const node = this.refs.modal;
         return node && node.lastChild;
     };
 
@@ -304,14 +312,9 @@ class Modal extends Component {
             backdrop,
             className,
             style,
-            onExit,
-            onExiting,
-            onEnter,
-            onEntering,
-            onEntered,
         } = this.props;
 
-        let dialog = React.children.only(children);
+        let dialog = React.Children.only(children);
         const filterProps = this.omitProps(this.props, Modal.propTypes);
 
         const mountModal = show || !this.state.exited;
@@ -341,15 +344,15 @@ class Modal extends Component {
                     className={className}
                 >
                     <AttachHandler
-                        target={"document"}
+                        target={'document'}
                         events={{
                             keyup: this.handleDocumentKeyUp,
                             focus: {
                                 handler: this.enforceFocus,
                                 opts: {
                                     capture: true,
-                                }
-                            }
+                                },
+                            },
                         }}
                         />
                     { backdrop && this.renderBackdrop() }

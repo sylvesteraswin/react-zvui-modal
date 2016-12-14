@@ -2,7 +2,7 @@ import css from 'dom-helpers/style';
 import classes from 'dom-helpers/class';
 
 import isOverflowing from './isOverflowing';
-import { scrollbarSize } from './helpers';
+import { scrollbarSize as getScrollbarSize } from './helpers';
 import { ariaHidden, hideSiblings, showSiblings } from './manageHidden';
 
 
@@ -22,7 +22,7 @@ const findContainer = (data, modal) => {
 };
 
 const setContainerStyle = (state, container) => {
-    let style = {
+    const style = {
         overflow: 'hidden',
     };
 
@@ -52,14 +52,14 @@ class ModalManager {
     constructor({ hideSiblingNodes = true, handleContainerOverflow = true } = {}) {
         this.hideSiblingNodes = hideSiblingNodes;
         this.handleContainerOverflow = handleContainerOverflow;
-        this.modal = [];
+        this.modals = [];
         this.containers = [];
         this.data = [];
     }
 
     add(modal, container, className) {
         let modalIdx = this.modals.indexOf(modal);
-        let containerIdx = this.containers.indexOf(container);
+        const containerIdx = this.containers.indexOf(container);
 
         if (modalIdx !== -1) {
             return modalIdx;
@@ -77,7 +77,7 @@ class ModalManager {
             return modalIdx;
         }
 
-        let data {
+        const data = {
             modals: [ modal ],
             //right now only the first modal of a container will have its classes applied
             classes: className ? className.split(/\s+/) : [],
@@ -97,15 +97,15 @@ class ModalManager {
     }
 
     remove(modal) {
-        let modalIdx = this.modals.indexOf(modal);
+        const modalIdx = this.modals.indexOf(modal);
 
         if (modalIdx === -1) {
             return;
         }
 
-        let containerIdx = findContainer(this.data, modal);
-        let data = this.data[containerIdx];
-        let container = this.containers[containerIdx];
+        const containerIdx = findContainer(this.data, modal);
+        const data = this.data[containerIdx];
+        const container = this.containers[containerIdx];
 
         data.modals.splice(data.modals.indexOf(modal), 1);
 
@@ -132,7 +132,7 @@ class ModalManager {
     }
 
     isTopModal(modal) {
-        return !!this.modals.length && this.modals[this.modals.length - 1] === modals;
+        return !!this.modals.length && this.modals[this.modals.length - 1] === modal;
     }
 }
 

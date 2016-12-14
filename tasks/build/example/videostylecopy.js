@@ -3,7 +3,7 @@ import rename from 'gulp-rename';
 
 module.exports = () => {
     return gulp
-        .src('build/*.css')
-        .pipe(rename('style.css'))
+        .src('node_modules/react-video-js/build/*.css')
+        .pipe(rename('video-style.css'))
         .pipe(gulp.dest('example'));
 };

@@ -1,5 +1,13 @@
 import ReactDOM from 'react-dom';
 
+const isWindow = (node) => {
+    return node === node.window
+        ? node
+        : node.nodeType === 9
+            ? node.defaultView || node.parentWindow
+            : false;
+};
+
 // Inspired by https://github.com/facebook/fbjs/blob/master/packages/fbjs/src/core/ExecutionEnvironment.js
 const canUseDom = !!(
     typeof window !== 'undefined' &&
@@ -46,9 +54,9 @@ const contains = (() => {
                 return fallback(context, node);
             }
         } : fallback;
-}());
+})();
 
-let getContainer = (container, defaultContainer) => {
+const getContainer = (container, defaultContainer) => {
     container = typeof container === 'function' ? container() : container;
     return ReactDOM.findDOMNode(container) || defaultContainer;
 };
@@ -73,4 +81,13 @@ const scrollbarSize = (recalc) => {
     return size;
 };
 
-export { ownerDocumentFn, canUseDom, contains, getContainer, activeElement, scrollbarSize };
+export {
+    ownerDocument,
+    ownerDocumentFn,
+    canUseDom,
+    contains,
+    getContainer,
+    activeElement,
+    scrollbarSize,
+    isWindow,
+};
