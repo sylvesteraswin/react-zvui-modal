@@ -56,6 +56,8 @@ class Modal extends Component {
         // A callback fired when either the backdrop is clicked or the escape key is pressed
         // But setting the prop `show` to false can be used to close the Modal
         onHide: PropTypes.func,
+        // A callback fired when the window is resized
+        onResize: PropTypes.func,
         // Include a backdrop component
         backdrop: PropTypes.oneOfType([
             PropTypes.bool,
@@ -277,7 +279,7 @@ class Modal extends Component {
             this.props.onBackdropClick();
         }
 
-        if (this.props.backdrop === true) {
+        if (this.props.backdrop) {
             this.props.onHide();
         }
     };
@@ -288,6 +290,12 @@ class Modal extends Component {
                 this.props.onEscapeKeyUp();
             }
             this.props.onHide();
+        }
+    };
+
+    handleResize = (e) => {
+        if (this.props.onResize) {
+            this.props.onResize();
         }
     };
 
@@ -420,8 +428,9 @@ class Modal extends Component {
                     {
                         show &&
                         <AttachHandler
-                            target={'document'}
+                            target={'window'}
                             events={{
+                                resize: this.handleResize,
                                 keyup: this.handleDocumentKeyUp,
                                 focus: {
                                     handler: this.enforceFocus,

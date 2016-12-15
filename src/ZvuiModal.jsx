@@ -4,6 +4,8 @@ import componentOrElement from 'react-prop-types/lib/componentOrElement';
 import css from 'dom-helpers/style';
 import cn from 'classnames';
 
+import AttachHandler from 'react-attach-handler'; //eslint-disable-line no-unused-vars
+
 import BaseModal from './base/Modal';
 import isOverflowing from './base/isOverflowing'; //eslint-disable-line no-unused-vars
 
@@ -90,6 +92,7 @@ class ZvuiModal extends Component {
     state = {
         classes: '',
         dialogStyle: {},
+        sizeHandler: false,
     }
 
     componentDidMount = () => {
@@ -156,16 +159,21 @@ class ZvuiModal extends Component {
         const nodeInner = findDOMNode(this.dialogInner);
         const {
             height: innerHeight,
+            width: innerWidth,
         } = nodeInner.getBoundingClientRect() || {};
 
         const {
             height,
+            width,
         } = node.getBoundingClientRect() || {};
 
-        const modalOverflow = height - 10 < innerHeight;
-        let marginStyles = {};
+        const modalOverflowHeight = (height - 10 < innerHeight);
+        const modalOverflowWidth = (width - 10 < innerWidth);
+        let marginStyles = {
+            left: 0,
+        };
 
-        if (!modalOverflow) {
+        if (!modalOverflowHeight) {
             marginStyles = {
                 ...marginStyles,
                 top: '50%',
@@ -175,6 +183,18 @@ class ZvuiModal extends Component {
             marginStyles = {
                 ...marginStyles,
             };
+        }
+
+        if (!modalOverflowWidth) {
+            marginStyles = {
+                ...marginStyles,
+                left: '50%',
+                marginLeft: 0 - innerWidth / 2,
+            };
+        } else {
+            marginStyles = {
+                ...marginStyles,
+            }
         }
 
         return {
@@ -278,6 +298,7 @@ class ZvuiModal extends Component {
                 onExited={onExited}
                 backdropStyle={backdrop}
                 transition={transition}
+                onResize={this._show}
                 backdropClassName={cn(`${PREFIX}-backdrop`, {
                     in: props.show,
                 })}
