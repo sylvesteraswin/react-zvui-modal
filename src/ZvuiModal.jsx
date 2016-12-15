@@ -64,7 +64,6 @@ class ZvuiModal extends Component {
         onExited: PropTypes.func,
         modalPrefix: PropTypes.func,
         dialogClassName: PropTypes.string,
-        attentionClass: PropTypes.string,
     };
 
     static defaultProps = {
@@ -90,15 +89,21 @@ class ZvuiModal extends Component {
 
     state = {
         classes: '',
+        dialogStyle: {},
     }
 
     componentDidMount = () => {
         getZIndex = getZIndex || (() => {
+            const {
+                modalPrefix,
+            } = this.props;
+            const prefix = modalPrefix || this.getDefaultPrefix();
+
             const modal = document.createElement('div');
             const backdrop = document.createElement('div');
 
-            modal.className = 'zvui-modal hide';
-            backdrop.className = 'zvui-modal-backdrop hide';
+            modal.className = `${prefix} hide`;
+            backdrop.className = `${prefix}-backdrop hide`;
 
             document.body.appendChild(modal);
             document.body.appendChild(backdrop);
@@ -116,9 +121,6 @@ class ZvuiModal extends Component {
 
     handleBackdropClick = (e) => {
         if (e.target !== e.currentTarget) { return; }
-        // if (this.props.backdrop === 'static') {
-        //     return this.attention();
-        // }
         this.props.onHide();
     };
 
@@ -151,7 +153,29 @@ class ZvuiModal extends Component {
         const bodyIsOverflowing = isOverflowing(container);
         const modalIsOverflowing = scrollHt > doc.documentElement.clientHeight;
 
-        console.log(node.getBoundingClientRect());
+        const nodeInner = findDOMNode(this.dialogInner);
+        const {
+            height: innerHeight,
+        } = nodeInner.getBoundingClientRect() || {};
+
+        const {
+            height,
+        } = node.getBoundingClientRect() || {};
+
+        const modalOverflow = height - 10 < innerHeight;
+        let marginStyles = {};
+
+        if (!modalOverflow) {
+            marginStyles = {
+                ...marginStyles,
+                top: '50%',
+                marginTop: 0 - innerHeight / 2,
+            };
+        } else {
+            marginStyles = {
+                ...marginStyles,
+            };
+        }
 
         return {
             dialog: {
@@ -161,6 +185,9 @@ class ZvuiModal extends Component {
             },
             backdrop: {
                 zIndex: getZIndex('backdrop'),
+            },
+            dialogStyle: {
+                ...marginStyles,
             },
         };
     };
@@ -184,6 +211,7 @@ class ZvuiModal extends Component {
             dialog,
             classes,
             backdrop,
+            dialogStyle,
         } = this.state;
 
         delete props.manager;
@@ -207,8 +235,9 @@ class ZvuiModal extends Component {
                 onClick={this.props.backdrop ? e => this.handleBackdropClick(e) : null}
             >
                 <div
-                    key='zvui-modal'
-                    ref='zvui-modal-inner'
+                    key={`${prefix}`}
+                    ref={r => this.dialogInner = r}
+                    style={dialogStyle}
                     className={cn(
                         `${prefix}-dialog`,
                         dialogClassName,

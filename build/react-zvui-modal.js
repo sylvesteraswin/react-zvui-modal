@@ -220,8 +220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    onExiting: _react.PropTypes.func,
 	    onExited: _react.PropTypes.func,
 	    modalPrefix: _react.PropTypes.func,
-	    dialogClassName: _react.PropTypes.string,
-	    attentionClass: _react.PropTypes.string
+	    dialogClassName: _react.PropTypes.string
 	};
 	ZvuiModal.defaultProps = {
 	    backdrop: true,
@@ -249,16 +248,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    this.state = {
-	        classes: ''
+	        classes: '',
+	        dialogStyle: {}
 	    };
 
 	    this.componentDidMount = function () {
 	        getZIndex = getZIndex || function () {
+	            var modalPrefix = _this2.props.modalPrefix;
+
+	            var prefix = modalPrefix || _this2.getDefaultPrefix();
+
 	            var modal = document.createElement('div');
 	            var backdrop = document.createElement('div');
 
-	            modal.className = 'zvui-modal hide';
-	            backdrop.className = 'zvui-modal-backdrop hide';
+	            modal.className = prefix + ' hide';
+	            backdrop.className = prefix + '-backdrop hide';
 
 	            document.body.appendChild(modal);
 	            document.body.appendChild(backdrop);
@@ -280,9 +284,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (e.target !== e.currentTarget) {
 	            return;
 	        }
-	        // if (this.props.backdrop === 'static') {
-	        //     return this.attention();
-	        // }
 	        _this2.props.onHide();
 	    };
 
@@ -313,7 +314,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var bodyIsOverflowing = (0, _isOverflowing2.default)(container);
 	        var modalIsOverflowing = scrollHt > doc.documentElement.clientHeight;
 
-	        console.log(node.getBoundingClientRect());
+	        var nodeInner = (0, _reactDom.findDOMNode)(_this2.dialogInner);
+
+	        var _ref2 = nodeInner.getBoundingClientRect() || {},
+	            innerHeight = _ref2.height;
+
+	        var _ref3 = node.getBoundingClientRect() || {},
+	            height = _ref3.height;
+
+	        var modalOverflow = height - 10 < innerHeight;
+	        var marginStyles = {};
+
+	        if (!modalOverflow) {
+	            marginStyles = _extends({}, marginStyles, {
+	                top: '50%',
+	                marginTop: 0 - innerHeight / 2
+	            });
+	        } else {
+	            marginStyles = _extends({}, marginStyles);
+	        }
 
 	        return {
 	            dialog: {
@@ -323,7 +342,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            backdrop: {
 	                zIndex: getZIndex('backdrop')
-	            }
+	            },
+	            dialogStyle: _extends({}, marginStyles)
 	        };
 	    };
 
@@ -346,7 +366,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _state = _this2.state,
 	            dialog = _state.dialog,
 	            classes = _state.classes,
-	            backdrop = _state.backdrop;
+	            backdrop = _state.backdrop,
+	            dialogStyle = _state.dialogStyle;
 
 	        delete props.manager;
 	        var elementProps = findTheBlackSheeps(props, Object.keys(ZvuiModal.propTypes));
@@ -370,8 +391,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return _this2.handleBackdropClick(e);
 	            } : null
 	        }), _react2.default.createElement('div', {
-	            key: 'zvui-modal',
-	            ref: 'zvui-modal-inner',
+	            key: '' + prefix,
+	            ref: function ref(r) {
+	                return _this2.dialogInner = r;
+	            },
+	            style: dialogStyle,
 	            className: (0, _classnames2.default)(prefix + '-dialog', dialogClassName, classes, (_cn = {}, _defineProperty(_cn, prefix + '-sm', props.small), _defineProperty(_cn, prefix + '-md', props.medium), _defineProperty(_cn, prefix + '-lg', props.large), _cn))
 	        }, _react2.default.createElement('div', {
 	            className: prefix + '-content'
@@ -379,9 +403,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return _react2.default.createElement(_Modal2.default, {
 	            keyboard: keyboard,
-	            ref: function ref(_ref2) {
-	                _this2.modal = _ref2 && _ref2.modal;
-	                _this2.backdrop = _ref2 && _ref2.backdrop;
+	            ref: function ref(_ref4) {
+	                _this2.modal = _ref4 && _ref4.modal;
+	                _this2.backdrop = _ref4 && _ref4.backdrop;
 	            },
 	            container: container,
 	            backdrop: props.backdrop,
