@@ -194,7 +194,7 @@ class ZvuiModal extends Component {
         } else {
             marginStyles = {
                 ...marginStyles,
-            }
+            };
         }
 
         return {

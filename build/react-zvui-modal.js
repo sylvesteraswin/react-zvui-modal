@@ -1591,7 +1591,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 
-	    this.handleResize = function (e) {
+	    this.handleResize = function () {
 	        if (_this2.props.onResize) {
 	            _this2.props.onResize();
 	        }

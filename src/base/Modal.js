@@ -293,7 +293,7 @@ class Modal extends Component {
         }
     };
 
-    handleResize = (e) => {
+    handleResize = () => {
         if (this.props.onResize) {
             this.props.onResize();
         }
