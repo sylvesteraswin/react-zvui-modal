@@ -81,6 +81,8 @@ const scrollbarSize = (recalc) => {
     return size;
 };
 
+const NOOP = () => {};
+
 export {
     ownerDocument,
     ownerDocumentFn,
@@ -90,4 +92,5 @@ export {
     activeElement,
     scrollbarSize,
     isWindow,
+    NOOP,
 };

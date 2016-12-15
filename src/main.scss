@@ -2,6 +2,16 @@
 @import "scss/media";
 
 .#{$modal-prefix} {
+    &.hide, .hide {
+        display: none;
+    }
+    &.fade, .fade {
+        opacity: 0;
+        transition: opacity .15s linear;
+        &.in {
+            opacity: 1;
+        }
+    }
     &-close {
         float: right;
         font-size: ($font-size-base * 1.5);
@@ -40,6 +50,7 @@
         overflow: hidden;
     }
 
+    // display: none;
     overflow: hidden;
     position: fixed;
     top: 0;
@@ -49,14 +60,17 @@
     z-index: $zindex-modal;
     -webkit-overflow-scrolling: touch;
     outline: 0;
-    &.in {
-        opacity: 1;
+
+    &.fade .#{$modal-prefix} {
+        &-dialog {
+            transform: translate(0,-25%);
+            transition: transform 0.3s ease-out;
+        }
     }
 
-    &.in #{$modal-prefix} {
+    &.in .#{$modal-prefix} {
         &-dialog {
             transform: translate(0, 0);
-
         }
     }
 
@@ -72,8 +86,9 @@
         width: auto;
         width: 100%;
         box-sizing: border-box;
-        left: 50%;
-        transform: translateX(-50%);
+        margin: auto;
+        // left: 50%;
+        // transform: translateX(-50%);
         @media #{$tablet} {
             width: $modal-md;
             top: 1%;
@@ -112,6 +127,9 @@
         left: 0;
         z-index: $zindex-modal-background;
         background-color: $modal-backdrop-bg;
+        &.fade {
+            opacity: 0;
+        }
         &.in {
             opacity: $modal-backdrop-opacity;
         }

@@ -7,7 +7,7 @@
 		exports["ZvuiModal"] = factory(require("react"), require("react-dom"));
 	else
 		root["ZvuiModal"] = factory(root["React"], root["ReactDOM"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_18__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -80,39 +80,45 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentOrElement = __webpack_require__(3);
+	var _reactDom = __webpack_require__(3);
+
+	var _componentOrElement = __webpack_require__(4);
 
 	var _componentOrElement2 = _interopRequireDefault(_componentOrElement);
 
-	var _style = __webpack_require__(5);
+	var _style = __webpack_require__(6);
 
 	var _style2 = _interopRequireDefault(_style);
 
-	var _classnames = __webpack_require__(13);
+	var _classnames = __webpack_require__(14);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _Modal = __webpack_require__(14);
+	var _Modal = __webpack_require__(15);
 
 	var _Modal2 = _interopRequireDefault(_Modal);
 
-	var _isOverflowing = __webpack_require__(29);
+	var _isOverflowing = __webpack_require__(30);
 
 	var _isOverflowing2 = _interopRequireDefault(_isOverflowing);
 
-	var _helpers = __webpack_require__(30);
+	var _helpers = __webpack_require__(31);
 
-	var _ZvuiModalHeader = __webpack_require__(32);
+	var _ZvuiModalHeader = __webpack_require__(33);
 
 	var _ZvuiModalHeader2 = _interopRequireDefault(_ZvuiModalHeader);
 
-	var _ZvuiModalTitle = __webpack_require__(34);
+	var _ZvuiModalTitle = __webpack_require__(35);
 
 	var _ZvuiModalTitle2 = _interopRequireDefault(_ZvuiModalTitle);
 
-	var _ZvuiModalBody = __webpack_require__(35);
+	var _ZvuiModalBody = __webpack_require__(36);
 
 	var _ZvuiModalBody2 = _interopRequireDefault(_ZvuiModalBody);
+
+	var _ZvuiModalFade = __webpack_require__(37);
+
+	var _ZvuiModalFade2 = _interopRequireDefault(_ZvuiModalFade);
 
 	function _interopRequireDefault(obj) {
 	    return obj && obj.__esModule ? obj : { default: obj };
@@ -155,6 +161,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var baseIndex = {};
 	var PREFIX = 'zvui-modal';
+	var TRANSITION_DURATION = 300;
+	var BACKDROP_TRANSITION_DURATION = 150;
 
 	var getZIndex = void 0;
 
@@ -185,102 +193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            args[_key] = arguments[_key];
 	        }
 
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ZvuiModal.__proto__ || Object.getPrototypeOf(ZvuiModal)).call.apply(_ref, [this].concat(args))), _this), _this.getDefaultPrefix = GET_PREFIX, _this.getChildContext = function () {
-	            return _this._context || (_this._context = {
-	                onModalHide: _this.props.onHide,
-	                getDefaultPrefix: _this.getDefaultPrefix
-	            });
-	        }, _this.state = {
-	            classes: ''
-	        }, _this.componentDidMount = function () {
-	            getZIndex = getZIndex || function () {
-	                var modal = document.createElement('div');
-	                var backdrop = document.createElement('div');
-
-	                modal.className = 'zvui-modal hide';
-	                backdrop.className = 'zvui-backdrop hide';
-
-	                document.body.appendChild(modal);
-	                document.body.appendChild(backdrop);
-
-	                baseIndex.modal = +(0, _style2.default)(modal, 'z-index');
-	                baseIndex.backdrop = +(0, _style2.default)(backdrop, 'z-index');
-	                var zIndexFactor = baseIndex.modal - baseIndex.backdrop;
-
-	                document.body.removeChild(modal);
-	                document.body.removeChild(backdrop);
-
-	                return function (type) {
-	                    return baseIndex[type] + zIndexFactor * (_this.props.manager.modals.length - 1);
-	                };
-	            }();
-	        }, _this.handleBackdropClick = function (e) {
-	            if (e.target !== e.currentTarget) {
-	                return;
-	            }
-	            // if (this.props.backdrop === 'static') {
-	            //     return this.attention();
-	            // }
-	            _this.props.onHide();
-	        }, _this.render = function () {
-	            var _cn;
-
-	            var _this$props = _this.props,
-	                className = _this$props.className,
-	                children = _this$props.children,
-	                keyboard = _this$props.keyboard,
-	                modalPrefix = _this$props.modalPrefix,
-	                dialogClassName = _this$props.dialogClassName,
-	                container = _this$props.container,
-	                props = _objectWithoutProperties(_this$props, ['className', 'children', 'keyboard', 'modalPrefix', 'dialogClassName', 'container']);
-
-	            var _this$state = _this.state,
-	                dialog = _this$state.dialog,
-	                classes = _this$state.classes,
-	                backdrop = _this$state.backdrop;
-
-	            delete props.manager;
-	            var elementProps = findTheBlackSheeps(props, Object.keys(ZvuiModal.propTypes));
-
-	            var prefix = modalPrefix || _this.getDefaultPrefix();
-
-	            var modal = _react2.default.createElement('div', _extends({}, elementProps, {
-	                ref: function ref(r) {
-	                    return _this.dialog = r;
-	                },
-	                style: dialog,
-	                className: (0, _classnames2.default)(className, prefix, {
-	                    in: props.show
-	                }),
-	                onClick: _this.props.backdrop ? function (e) {
-	                    return _this.handleBackdropClick(e);
-	                } : null
-	            }), _react2.default.createElement('div', {
-	                key: 'zvui-modal',
-	                ref: 'zvui-modal-inner',
-	                className: (0, _classnames2.default)(prefix + '-dialog', dialogClassName, classes, (_cn = {}, _defineProperty(_cn, prefix + '-sm', props.small), _defineProperty(_cn, prefix + '-md', props.medium), _defineProperty(_cn, prefix + '-lg', props.large), _cn))
-	            }, _react2.default.createElement('div', {
-	                className: prefix + '-content'
-	            }, children)));
-
-	            return _react2.default.createElement(_Modal2.default, {
-	                keyboard: keyboard,
-	                ref: function ref(_ref2) {
-	                    _this.modal = _ref2 && _ref2.modal;
-	                    _this.backdrop = _ref2 && _ref2.backdrop;
-	                },
-	                container: container,
-	                backdrop: props.backdrop,
-	                show: props.show,
-	                onHide: props.onHide,
-	                onShow: props.onShow,
-	                backdropStyle: backdrop,
-	                backdropClassName: (0, _classnames2.default)(PREFIX + '-backdrop', {
-	                    in: props.show
-	                }),
-	                containerClassName: PREFIX + '-open'
-	            }, modal);
-	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ZvuiModal.__proto__ || Object.getPrototypeOf(ZvuiModal)).call.apply(_ref, [this].concat(args))), _this), _initialiseProps.call(_this), _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 
 	    return ZvuiModal;
@@ -296,9 +209,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    backdrop: _react.PropTypes.oneOf(['static', true, false]),
 	    keyboard: _react.PropTypes.bool,
 	    animate: _react.PropTypes.bool,
+	    transition: _react.PropTypes.any,
 	    container: _react.PropTypes.oneOfType([_componentOrElement2.default, _react.PropTypes.func]),
 	    onShow: _react.PropTypes.func,
 	    onHide: _react.PropTypes.func,
+	    onEnter: _react.PropTypes.func,
+	    onEntering: _react.PropTypes.func,
+	    onEntered: _react.PropTypes.func,
+	    onExit: _react.PropTypes.func,
+	    onExiting: _react.PropTypes.func,
+	    onExited: _react.PropTypes.func,
 	    modalPrefix: _react.PropTypes.func,
 	    dialogClassName: _react.PropTypes.string,
 	    attentionClass: _react.PropTypes.string
@@ -307,12 +227,183 @@ return /******/ (function(modules) { // webpackBootstrap
 	    backdrop: true,
 	    keyboard: true,
 	    animate: true,
+	    transition: true,
 	    container: _helpers.canUseDom ? document.body : null,
 	    manager: _Modal2.default.defaultProps.manager
 	};
 	ZvuiModal.childContextTypes = {
 	    onModalHide: _react.PropTypes.func,
 	    getDefaultPrefix: _react.PropTypes.func
+	};
+
+	var _initialiseProps = function _initialiseProps() {
+	    var _this2 = this;
+
+	    this.getDefaultPrefix = GET_PREFIX;
+
+	    this.getChildContext = function () {
+	        return _this2._context || (_this2._context = {
+	            onModalHide: _this2.props.onHide,
+	            getDefaultPrefix: _this2.getDefaultPrefix
+	        });
+	    };
+
+	    this.state = {
+	        classes: ''
+	    };
+
+	    this.componentDidMount = function () {
+	        getZIndex = getZIndex || function () {
+	            var modal = document.createElement('div');
+	            var backdrop = document.createElement('div');
+
+	            modal.className = 'zvui-modal hide';
+	            backdrop.className = 'zvui-modal-backdrop hide';
+
+	            document.body.appendChild(modal);
+	            document.body.appendChild(backdrop);
+
+	            baseIndex.modal = +(0, _style2.default)(modal, 'z-index');
+	            baseIndex.backdrop = +(0, _style2.default)(backdrop, 'z-index');
+	            var zIndexFactor = baseIndex.modal - baseIndex.backdrop;
+
+	            document.body.removeChild(modal);
+	            document.body.removeChild(backdrop);
+
+	            return function (type) {
+	                return baseIndex[type] + zIndexFactor * (_this2.props.manager.modals.length - 1);
+	            };
+	        }();
+	    };
+
+	    this.handleBackdropClick = function (e) {
+	        if (e.target !== e.currentTarget) {
+	            return;
+	        }
+	        // if (this.props.backdrop === 'static') {
+	        //     return this.attention();
+	        // }
+	        _this2.props.onHide();
+	    };
+
+	    this.handleEntering = function () {
+	        _this2._show.apply(_this2, arguments);
+
+	        if (_this2.props.onEntering) {
+	            _this2.props.onEntering();
+	        }
+	    };
+
+	    this._show = function () {
+	        if (_this2.props.show) {
+	            _this2.setState(_this2._getStyles);
+	        }
+	    };
+
+	    this._getStyles = function () {
+	        if (!_helpers.canUseDom) {
+	            return {};
+	        }
+
+	        var container = _this2.props.container;
+
+	        var node = (0, _reactDom.findDOMNode)(_this2.dialog);
+	        var doc = (0, _helpers.ownerDocument)(node);
+	        var scrollHt = node.scrollHeight;
+	        var bodyIsOverflowing = (0, _isOverflowing2.default)(container);
+	        var modalIsOverflowing = scrollHt > doc.documentElement.clientHeight;
+
+	        console.log(node.getBoundingClientRect());
+
+	        return {
+	            dialog: {
+	                zIndex: getZIndex('modal'),
+	                paddingRight: bodyIsOverflowing && !modalIsOverflowing ? (0, _helpers.scrollbarSize)() : 0,
+	                paddingLeft: !bodyIsOverflowing && modalIsOverflowing ? (0, _helpers.scrollbarSize)() : 0
+	            },
+	            backdrop: {
+	                zIndex: getZIndex('backdrop')
+	            }
+	        };
+	    };
+
+	    this.render = function () {
+	        var _cn;
+
+	        var _props = _this2.props,
+	            className = _props.className,
+	            children = _props.children,
+	            keyboard = _props.keyboard,
+	            modalPrefix = _props.modalPrefix,
+	            dialogClassName = _props.dialogClassName,
+	            container = _props.container,
+	            onEnter = _props.onEnter,
+	            onEntered = _props.onEntered,
+	            onExit = _props.onExit,
+	            onExited = _props.onExited,
+	            props = _objectWithoutProperties(_props, ['className', 'children', 'keyboard', 'modalPrefix', 'dialogClassName', 'container', 'onEnter', 'onEntered', 'onExit', 'onExited']);
+
+	        var _state = _this2.state,
+	            dialog = _state.dialog,
+	            classes = _state.classes,
+	            backdrop = _state.backdrop;
+
+	        delete props.manager;
+	        var elementProps = findTheBlackSheeps(props, Object.keys(ZvuiModal.propTypes));
+
+	        var prefix = modalPrefix || _this2.getDefaultPrefix();
+	        var transition = void 0;
+
+	        if (props.transition === true) {
+	            transition = _ZvuiModalFade2.default;
+	        }
+
+	        var modal = _react2.default.createElement('div', _extends({}, elementProps, {
+	            ref: function ref(r) {
+	                return _this2.dialog = r;
+	            },
+	            style: dialog,
+	            className: (0, _classnames2.default)(className, prefix, {
+	                in: props.show && !transition
+	            }),
+	            onClick: _this2.props.backdrop ? function (e) {
+	                return _this2.handleBackdropClick(e);
+	            } : null
+	        }), _react2.default.createElement('div', {
+	            key: 'zvui-modal',
+	            ref: 'zvui-modal-inner',
+	            className: (0, _classnames2.default)(prefix + '-dialog', dialogClassName, classes, (_cn = {}, _defineProperty(_cn, prefix + '-sm', props.small), _defineProperty(_cn, prefix + '-md', props.medium), _defineProperty(_cn, prefix + '-lg', props.large), _cn))
+	        }, _react2.default.createElement('div', {
+	            className: prefix + '-content'
+	        }, children)));
+
+	        return _react2.default.createElement(_Modal2.default, {
+	            keyboard: keyboard,
+	            ref: function ref(_ref2) {
+	                _this2.modal = _ref2 && _ref2.modal;
+	                _this2.backdrop = _ref2 && _ref2.backdrop;
+	            },
+	            container: container,
+	            backdrop: props.backdrop,
+	            show: props.show,
+	            onHide: props.onHide,
+	            onShow: props.onShow,
+	            onEnter: onEnter,
+	            onEntering: _this2.handleEntering,
+	            onEntered: onEntered,
+	            onExit: onExit,
+	            onExsiting: _this2.handleExiting,
+	            onExited: onExited,
+	            backdropStyle: backdrop,
+	            transition: transition,
+	            backdropClassName: (0, _classnames2.default)(PREFIX + '-backdrop', {
+	                in: props.show
+	            }),
+	            containerClassName: PREFIX + '-open',
+	            dialogTransitionTimeout: TRANSITION_DURATION,
+	            backdropTransitionTimeout: BACKDROP_TRANSITION_DURATION
+	        }, modal);
+	    };
 	};
 
 	ZvuiModal.Header = _ZvuiModalHeader2.default;
@@ -329,6 +420,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -341,7 +438,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _createChainableTypeChecker = __webpack_require__(4);
+	var _createChainableTypeChecker = __webpack_require__(5);
 
 	var _createChainableTypeChecker2 = _interopRequireDefault(_createChainableTypeChecker);
 
@@ -365,7 +462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = (0, _createChainableTypeChecker2.default)(validate);
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -410,15 +507,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var camelize = __webpack_require__(6),
-	    hyphenate = __webpack_require__(8),
-	    _getComputedStyle = __webpack_require__(10),
-	    removeStyle = __webpack_require__(12);
+	var camelize = __webpack_require__(7),
+	    hyphenate = __webpack_require__(9),
+	    _getComputedStyle = __webpack_require__(11),
+	    removeStyle = __webpack_require__(13);
 
 	var has = Object.prototype.hasOwnProperty;
 
@@ -439,7 +536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -449,7 +546,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	'use strict';
-	var camelize = __webpack_require__(7);
+	var camelize = __webpack_require__(8);
 	var msPattern = /^-ms-/;
 
 	module.exports = function camelizeStyleName(string) {
@@ -457,7 +554,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -471,7 +568,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -482,7 +579,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 
-	var hyphenate = __webpack_require__(9);
+	var hyphenate = __webpack_require__(10);
 	var msPattern = /^ms-/;
 
 	module.exports = function hyphenateStyleName(string) {
@@ -490,7 +587,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -502,14 +599,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var babelHelpers = __webpack_require__(11);
+	var babelHelpers = __webpack_require__(12);
 
-	var _utilCamelizeStyle = __webpack_require__(6);
+	var _utilCamelizeStyle = __webpack_require__(7);
 
 	var _utilCamelizeStyle2 = babelHelpers.interopRequireDefault(_utilCamelizeStyle);
 
@@ -555,7 +652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -591,7 +688,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -601,7 +698,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -655,7 +752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -663,6 +760,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+
+	var _extends2;
 
 	var _extends = Object.assign || function (target) {
 	    for (var i = 1; i < arguments.length; i++) {
@@ -678,34 +777,42 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentOrElement = __webpack_require__(3);
+	var _componentOrElement = __webpack_require__(4);
 
 	var _componentOrElement2 = _interopRequireDefault(_componentOrElement);
 
-	var _warning = __webpack_require__(15);
+	var _elementType = __webpack_require__(16);
+
+	var _elementType2 = _interopRequireDefault(_elementType);
+
+	var _warning = __webpack_require__(17);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
-	var _reactTeleportMe = __webpack_require__(16);
+	var _reactTeleportMe = __webpack_require__(18);
 
 	var _reactTeleportMe2 = _interopRequireDefault(_reactTeleportMe);
 
-	var _reactAttachHandler = __webpack_require__(23);
+	var _reactAttachHandler = __webpack_require__(24);
 
 	var _reactAttachHandler2 = _interopRequireDefault(_reactAttachHandler);
 
-	var _ModalManager = __webpack_require__(24);
+	var _ModalManager = __webpack_require__(25);
 
 	var _ModalManager2 = _interopRequireDefault(_ModalManager);
 
-	var _helpers = __webpack_require__(30);
+	var _helpers = __webpack_require__(31);
 
 	function _interopRequireDefault(obj) {
 	    return obj && obj.__esModule ? obj : { default: obj };
 	}
 
-	function _objectDestructuringEmpty(obj) {
-	    if (obj == null) throw new TypeError("Cannot destructure undefined");
+	function _defineProperty(obj, key, value) {
+	    if (key in obj) {
+	        Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });
+	    } else {
+	        obj[key] = value;
+	    }return obj;
 	}
 
 	function _classCallCheck(instance, Constructor) {
@@ -728,8 +835,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	var modalManager = new _ModalManager2.default();
-
-	var NOOP = function NOOP() {};
 
 	/**
 	 * Love them or hate them, `<Modal/>` provides a solid foundation for creating dialogs, lightboxes, or whatever else.
@@ -771,7 +876,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Modal;
 	}(_react.Component);
 
-	Modal.propTypes = _extends({}, _reactTeleportMe2.default.propTypes, {
+	Modal.propTypes = _extends({}, _reactTeleportMe2.default.propTypes, (_extends2 = {
 	    /**
 	     * A Node, Component instance, or function that returns either. The `container` will have the Portal children
 	     * appended to it.
@@ -817,15 +922,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // A callback fired after the Modal finishes transition out
 	    onExited: _react.PropTypes.func,
 	    // A modal manager instance used to track and manage the state of open Modals
-	    manager: _react.PropTypes.object.isRequired
-	});
+	    manager: _react.PropTypes.object.isRequired,
+	    // A <Transition /> component to use for the dialog and backdrop
+	    transition: _elementType2.default,
+	    // The `timeout` of the dialog transition if specified.
+	    dialogTransitionTimeout: _react.PropTypes.number,
+	    // The `timeout` of the backdrop transition if specified.
+	    backdropTransitionTimeout: _react.PropTypes.number
+	}, _defineProperty(_extends2, 'onEnter', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onEntering', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onEntered', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onExit', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onExiting', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onExited', _react2.default.PropTypes.func), _extends2));
 	Modal.defaultProps = {
 	    show: false,
 	    backdrop: true,
 	    keyboard: true,
 	    autoFocus: true,
 	    enforceFocus: true,
-	    onHide: NOOP,
+	    onHide: _helpers.NOOP,
 	    manager: modalManager,
 	    renderBackdrop: function renderBackdrop(props) {
 	        return _react2.default.createElement('div', props);
@@ -844,7 +955,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            _this2.setState({
 	                exited: false
 	            });
-	        } else {
+	        } else if (!nextProps.transition) {
 	            // Otherwise let handleHidden take care of marking exited.
 	            _this2.setState({
 	                exited: true
@@ -866,9 +977,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    this.componentDidUpdate = function (prevProps) {
-	        _objectDestructuringEmpty(_this2.props);
+	        var transition = _this2.props.transition;
 
-	        if (prevProps.show && !_this2.props.show) {
+	        if (prevProps.show && !_this2.props.show && !transition) {
 	            // Otherwise handleHidden will call this.
 	            _this2.onHide();
 	        } else if (!prevProps.show && _this2.props.show) {
@@ -877,11 +988,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    this.componentWillUnmount = function () {
-	        var show = _this2.props.show;
+	        var _props = _this2.props,
+	            show = _props.show,
+	            transition = _props.transition;
 
 	        _this2._isMounted = false;
 
-	        if (show || !_this2.state.exited) {
+	        if (show || transition && !_this2.state.exited) {
 	            _this2.onHide();
 	        }
 	    };
@@ -902,17 +1015,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    this.renderBackdrop = function () {
-	        var _props = _this2.props,
-	            backdropStyle = _props.backdropStyle,
-	            backdropClassName = _props.backdropClassName;
+	        var _props2 = _this2.props,
+	            backdropStyle = _props2.backdropStyle,
+	            backdropClassName = _props2.backdropClassName,
+	            renderBackdrop = _props2.renderBackdrop,
+	            Transition = _props2.transition,
+	            backdropTransitionTimeout = _props2.backdropTransitionTimeout;
+
+	        var backdropRef = function backdropRef(ref) {
+	            return _this2.backdrop = ref;
+	        };
 
 	        var backdrop = _react2.default.createElement('div', {
-	            ref: function ref(_ref2) {
-	                return _this2.backdrop = _ref2;
-	            },
+	            ref: backdropRef,
 	            style: backdropStyle,
 	            className: backdropClassName,
 	            onClick: _this2.handleBackdropClick });
+
+	        if (Transition) {
+	            backdrop = _react2.default.createElement(Transition, {
+	                'in': _this2.props.show,
+	                timeout: backdropTransitionTimeout
+	            }, renderBackdrop({
+	                ref: backdropRef,
+	                style: backdropStyle,
+	                className: backdropClassName,
+	                onClick: _this2.handleBackdropClick
+	            }));
+	        }
 
 	        return backdrop;
 	    };
@@ -946,9 +1076,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this2.onHide();
 
 	        if (_this2.props.onExited) {
-	            var _props2;
+	            var _props3;
 
-	            (_props2 = _this2.props).onExited.apply(_props2, arguments);
+	            (_props3 = _this2.props).onExited.apply(_props3, arguments);
 	        }
 	    };
 
@@ -991,7 +1121,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (modalContent && autoFocus && !focusInModal) {
 	            _this2.lastFocus = current;
 
-	            if (!modalContent.hasAttribute('tabIndex')) {
+	            if (typeof modalContent.hasAttribute === 'function' && !modalContent.hasAttribute('tabIndex')) {
 	                modalContent.setAttribute('tabIndex', -1);
 	                (0, _warning2.default)(false, 'The modal content node does not accept focus. For the benefit of assistive technologies, the tabIndex of the node is being set to "-1".');
 	            }
@@ -1033,18 +1163,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    this.render = function () {
-	        var _props3 = _this2.props,
-	            show = _props3.show,
-	            container = _props3.container,
-	            children = _props3.children,
-	            backdrop = _props3.backdrop,
-	            className = _props3.className,
-	            style = _props3.style;
+	        var _props4 = _this2.props,
+	            show = _props4.show,
+	            container = _props4.container,
+	            children = _props4.children,
+	            Transition = _props4.transition,
+	            backdrop = _props4.backdrop,
+	            dialogTransitionTimeout = _props4.dialogTransitionTimeout,
+	            className = _props4.className,
+	            style = _props4.style,
+	            onExit = _props4.onExit,
+	            onExiting = _props4.onExiting,
+	            onEnter = _props4.onEnter,
+	            onEntering = _props4.onEntering,
+	            onEntered = _props4.onEntered;
 
 	        var dialog = _react2.default.Children.only(children);
 	        var filterProps = _this2.omitProps(_this2.props, Modal.propTypes);
 
-	        var mountModal = show || !_this2.state.exited;
+	        var mountModal = show || Transition && !_this2.state.exited;
 	        if (!mountModal) {
 	            return null;
 	        }
@@ -1060,6 +1197,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        }
 
+	        if (Transition) {
+	            dialog = _react2.default.createElement(Transition, {
+	                transitionAppear: true,
+	                unmountOnExit: true,
+	                'in': show,
+	                timeout: dialogTransitionTimeout,
+	                onExit: onExit,
+	                onExiting: onExiting,
+	                onExited: _this2.handleHidden,
+	                onEnter: onEnter,
+	                onEntering: onEntering,
+	                onEntered: onEntered
+	            }, dialog);
+	        }
+
 	        return _react2.default.createElement(_reactTeleportMe2.default, {
 	            ref: _this2.setMountNode,
 	            container: container
@@ -1069,7 +1221,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }, filterProps, {
 	            style: style,
 	            className: className
-	        }), _react2.default.createElement(_reactAttachHandler2.default, {
+	        }), show && _react2.default.createElement(_reactAttachHandler2.default, {
 	            target: 'document',
 	            events: {
 	                keyup: _this2.handleDocumentKeyUp,
@@ -1088,7 +1240,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Modal;
 
 /***/ },
-/* 15 */
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _createChainableTypeChecker = __webpack_require__(5);
+
+	var _createChainableTypeChecker2 = _interopRequireDefault(_createChainableTypeChecker);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function elementType(props, propName, componentName, location, propFullName) {
+	  var propValue = props[propName];
+	  var propType = typeof propValue === 'undefined' ? 'undefined' : _typeof(propValue);
+
+	  if (_react2.default.isValidElement(propValue)) {
+	    return new Error('Invalid ' + location + ' `' + propFullName + '` of type ReactElement ' + ('supplied to `' + componentName + '`, expected an element type (a string ') + 'or a ReactClass).');
+	  }
+
+	  if (propType !== 'function' && propType !== 'string') {
+	    return new Error('Invalid ' + location + ' `' + propFullName + '` of value `' + propValue + '` ' + ('supplied to `' + componentName + '`, expected an element type (a string ') + 'or a ReactClass).');
+	  }
+
+	  return null;
+	}
+
+	exports.default = (0, _createChainableTypeChecker2.default)(elementType);
+
+/***/ },
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1154,14 +1343,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(17).default;
+	module.exports = __webpack_require__(19).default;
 
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -1176,15 +1365,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(18);
+	var _reactDom = __webpack_require__(3);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _reactAddonsShallowCompare = __webpack_require__(19);
+	var _reactAddonsShallowCompare = __webpack_require__(20);
 
 	var _reactAddonsShallowCompare2 = _interopRequireDefault(_reactAddonsShallowCompare);
 
-	var _DelayRenderFactory2 = __webpack_require__(22);
+	var _DelayRenderFactory2 = __webpack_require__(23);
 
 	var _DelayRenderFactory3 = _interopRequireDefault(_DelayRenderFactory2);
 
@@ -1287,19 +1476,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.DelayRenderFactory = _DelayRenderFactory3.default;
 
 /***/ },
-/* 18 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_18__;
-
-/***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(20);
+	module.exports = __webpack_require__(21);
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1314,7 +1497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var shallowEqual = __webpack_require__(21);
+	var shallowEqual = __webpack_require__(22);
 
 	/**
 	 * Does a shallow comparison for props and state.
@@ -1328,7 +1511,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = shallowCompare;
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/**
@@ -1400,7 +1583,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = shallowEqual;
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -1507,7 +1690,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = DelayRenderFactory;
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function webpackUniversalModuleDefinition(root, factory) {
@@ -1945,7 +2128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	;
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -1962,21 +2145,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	}();
 
-	var _style = __webpack_require__(5);
+	var _style = __webpack_require__(6);
 
 	var _style2 = _interopRequireDefault(_style);
 
-	var _class = __webpack_require__(25);
+	var _class = __webpack_require__(26);
 
 	var _class2 = _interopRequireDefault(_class);
 
-	var _isOverflowing = __webpack_require__(29);
+	var _isOverflowing = __webpack_require__(30);
 
 	var _isOverflowing2 = _interopRequireDefault(_isOverflowing);
 
-	var _helpers = __webpack_require__(30);
+	var _helpers = __webpack_require__(31);
 
-	var _manageHidden = __webpack_require__(31);
+	var _manageHidden = __webpack_require__(32);
 
 	function _interopRequireDefault(obj) {
 	    return obj && obj.__esModule ? obj : { default: obj };
@@ -2142,30 +2325,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ModalManager;
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	module.exports = {
-	  addClass: __webpack_require__(26),
-	  removeClass: __webpack_require__(28),
-	  hasClass: __webpack_require__(27)
+	  addClass: __webpack_require__(27),
+	  removeClass: __webpack_require__(29),
+	  hasClass: __webpack_require__(28)
 	};
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var hasClass = __webpack_require__(27);
+	var hasClass = __webpack_require__(28);
 
 	module.exports = function addClass(element, className) {
 	  if (element.classList) element.classList.add(className);else if (!hasClass(element)) element.className = element.className + ' ' + className;
 	};
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2174,7 +2357,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2184,7 +2367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -2192,7 +2375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = undefined;
 
-	var _helpers = __webpack_require__(30);
+	var _helpers = __webpack_require__(31);
 
 	var isBody = function isBody(node) {
 	    return node && node.tagName.toLowerCase() === 'body';
@@ -2215,15 +2398,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = isOverflowing;
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports.isWindow = exports.scrollbarSize = exports.activeElement = exports.getContainer = exports.contains = exports.canUseDom = exports.ownerDocumentFn = exports.ownerDocument = undefined;
+	exports.NOOP = exports.isWindow = exports.scrollbarSize = exports.activeElement = exports.getContainer = exports.contains = exports.canUseDom = exports.ownerDocumentFn = exports.ownerDocument = undefined;
 
-	var _reactDom = __webpack_require__(18);
+	var _reactDom = __webpack_require__(3);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
@@ -2305,6 +2488,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return size;
 	};
 
+	var NOOP = function NOOP() {};
+
 	exports.ownerDocument = ownerDocument;
 	exports.ownerDocumentFn = ownerDocumentFn;
 	exports.canUseDom = canUseDom;
@@ -2313,9 +2498,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.activeElement = activeElement;
 	exports.scrollbarSize = scrollbarSize;
 	exports.isWindow = isWindow;
+	exports.NOOP = NOOP;
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -2369,7 +2555,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.showSiblings = showSiblings;
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2392,11 +2578,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(13);
+	var _classnames = __webpack_require__(14);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _ZvuiModalDismiss = __webpack_require__(33);
+	var _ZvuiModalDismiss = __webpack_require__(34);
 
 	var _ZvuiModalDismiss2 = _interopRequireDefault(_ZvuiModalDismiss);
 
@@ -2482,7 +2668,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ZvuiModalHeader;
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2583,7 +2769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ZvuiModalDismiss;
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2606,7 +2792,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(13);
+	var _classnames = __webpack_require__(14);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -2678,7 +2864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ZvuiModalTitle;
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2701,7 +2887,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _classnames = __webpack_require__(13);
+	var _classnames = __webpack_require__(14);
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -2773,6 +2959,455 @@ return /******/ (function(modules) { // webpackBootstrap
 	    getDefaultPrefix: _react.PropTypes.func
 	};
 	exports.default = ZvuiModalBody;
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _extends = Object.assign || function (target) {
+	    for (var i = 1; i < arguments.length; i++) {
+	        var source = arguments[i];for (var key in source) {
+	            if (Object.prototype.hasOwnProperty.call(source, key)) {
+	                target[key] = source[key];
+	            }
+	        }
+	    }return target;
+	}; //eslint-disable-line no-unused-vars
+
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _Transition = __webpack_require__(38);
+
+	var _Transition2 = _interopRequireDefault(_Transition);
+
+	function _interopRequireDefault(obj) {
+	    return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	//eslint-disable-line no-unused-vars
+
+	var ZvuiModalFade = function ZvuiModalFade(props) {
+	    return _react2.default.createElement(_Transition2.default, _extends({}, props, {
+	        className: 'fade',
+	        enteredClassName: 'in',
+	        enteringClassName: 'in'
+	    }));
+	};
+
+	exports.default = ZvuiModalFade;
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.EXITING = exports.ENTERED = exports.ENTERING = exports.EXITED = exports.UNMOUNTED = undefined;
+
+	var _extends = Object.assign || function (target) {
+	    for (var i = 1; i < arguments.length; i++) {
+	        var source = arguments[i];for (var key in source) {
+	            if (Object.prototype.hasOwnProperty.call(source, key)) {
+	                target[key] = source[key];
+	            }
+	        }
+	    }return target;
+	};
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(3);
+
+	var _properties = __webpack_require__(39);
+
+	var _properties2 = _interopRequireDefault(_properties);
+
+	var _classnames = __webpack_require__(14);
+
+	var _classnames2 = _interopRequireDefault(_classnames);
+
+	var _helpers = __webpack_require__(31);
+
+	function _interopRequireDefault(obj) {
+	    return obj && obj.__esModule ? obj : { default: obj };
+	}
+
+	function _objectWithoutProperties(obj, keys) {
+	    var target = {};for (var i in obj) {
+	        if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
+	    }return target;
+	}
+
+	function _classCallCheck(instance, Constructor) {
+	    if (!(instance instanceof Constructor)) {
+	        throw new TypeError("Cannot call a class as a function");
+	    }
+	}
+
+	function _possibleConstructorReturn(self, call) {
+	    if (!self) {
+	        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	    }return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+	}
+
+	function _inherits(subClass, superClass) {
+	    if (typeof superClass !== "function" && superClass !== null) {
+	        throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
+	    }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	} // Fork of https://github.com/react-bootstrap/react-overlays/blob/master/src/Transition.js
+
+
+	var transitionEndEvent = _properties2.default.end;
+	var UNMOUNTED = exports.UNMOUNTED = 0;
+	var EXITED = exports.EXITED = 1;
+	var ENTERING = exports.ENTERING = 2;
+	var ENTERED = exports.ENTERED = 3;
+	var EXITING = exports.EXITING = 4;
+
+	/**
+	 * The Transition component lets you define and run css transitions with a simple declarative api.
+	 * It works similar to React's own [CSSTransitionGroup](http://facebook.github.io/react/docs/animation.html#high-level-api-reactcsstransitiongroup)
+	 * but is specifically optimized for transitioning a single child "in" or "out".
+	 *
+	 * You don't even need to use class based css transitions if you don't want to (but it is easiest).
+	 * The extensive set of lifecyle callbacks means you have control over
+	 * the transitioning now at each step of the way.
+	 */
+
+	var Transition = function (_Component) {
+	    _inherits(Transition, _Component);
+
+	    function Transition() {
+	        var _ref;
+
+	        var _temp, _this, _ret;
+
+	        _classCallCheck(this, Transition);
+
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Transition.__proto__ || Object.getPrototypeOf(Transition)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+	            status: function () {
+	                var initialStatus = void 0;
+	                if (_this.props.in) {
+	                    initialStatus = _this.props.transitionAppear ? EXITED : ENTERED;
+	                } else {
+	                    initialStatus = _this.props.unmountOnExit ? UNMOUNTED : EXITED;
+	                }
+
+	                return initialStatus;
+	            }()
+	        }, _this.componentDidMount = function () {
+	            if (_this.props.transitionAppear && _this.props.in) {
+	                _this.performEnter(_this.props);
+	            }
+	        }, _this.componentWillReceiveProps = function (nextProps) {
+	            if (nextProps.in && _this.props.unmountOnExit) {
+	                if (_this.state.status === UNMOUNTED) {
+	                    // Start enter transition in componentDidUpdate.
+	                    _this.setState({ status: EXITED });
+	                } else {
+	                    _this._needUpdate = true;
+	                }
+	            }
+	        }, _this.componentDidUpdate = function () {
+	            var status = _this.state.status;
+
+	            if (_this.props.in) {
+	                if (status === EXITING) {
+	                    _this.performEnter(_this.props);
+	                } else if (status === EXITED) {
+	                    _this.performEnter(_this.props);
+	                }
+	            } else {
+	                // Otherwise we're already entering or entered.
+	                if (status === ENTERING || status === ENTERED) {
+	                    _this.performExit(_this.props);
+	                }
+	                // Otherwise we're already exited or exiting.
+	            }
+	        }, _this.componentWillUnmount = function () {
+	            _this.cancelNextCallback();
+	        }, _this.performEnter = function (props) {
+	            _this.cancelNextCallback();
+	            var node = (0, _reactDom.findDOMNode)(_this);
+	            var onEnter = props.onEnter;
+	            var _this$props = _this.props,
+	                onEntering = _this$props.onEntering,
+	                onEntered = _this$props.onEntered;
+
+	            // Not this.props, because we might be about to receive new props.
+
+	            onEnter(node);
+
+	            _this.setSafeState({
+	                status: ENTERING
+	            }, function () {
+	                onEntering(node);
+	                _this.onTransitionEnd(node, function () {
+	                    _this.setSafeState({
+	                        status: ENTERED
+	                    }, function () {
+	                        onEntered(node);
+	                    });
+	                });
+	            });
+	        }, _this.performExit = function (props) {
+	            _this.cancelNextCallback();
+	            var node = (0, _reactDom.findDOMNode)(_this);
+	            var onExit = props.onExit;
+	            var _this$props2 = _this.props,
+	                onExiting = _this$props2.onExiting,
+	                onExited = _this$props2.onExited;
+
+	            // Not this.props, because we might be about to receive new props.
+
+	            onExit(node);
+
+	            _this.setSafeState({
+	                status: EXITING
+	            }, function () {
+	                onExiting(node);
+	                _this.onTransitionEnd(node, function () {
+	                    _this.setSafeState({
+	                        status: EXITED
+	                    }, function () {
+	                        onExited(node);
+	                    });
+	                });
+	            });
+	        }, _this.cancelNextCallback = function () {
+	            if (_this.nextCallback) {
+	                _this.nextCallback.cancel();
+	                _this.nextCallback = null;
+	            }
+	        }, _this.setSafeState = function (nextState, callback) {
+	            // This shouldn't be necessary, but there are weird race conditions with
+	            // setState callbacks and unmounting in testing, so always make sure that
+	            // we can cancel any pending setState callbacks after we unmount.
+	            _this.setState(nextState, _this.setNextCallback(callback));
+	        }, _this.setNextCallback = function (callback) {
+	            var active = true;
+
+	            _this.nextCallback = function (event) {
+	                if (active) {
+	                    active = false;
+	                    _this.nextCallback = null;
+	                    callback(event);
+	                }
+	            };
+
+	            _this.nextCallback.cancel = function () {
+	                active = false;
+	            };
+	            return _this.nextCallback;
+	        }, _this.onTransitionEnd = function (node, handler) {
+	            _this.setNextCallback(handler);
+
+	            if (node) {
+	                node.addEventListener(transitionEndEvent, _this.nextCallback, false);
+	                setTimeout(_this.nextCallback, _this.props.timeout);
+	            } else {
+	                setTimeout(_this.nextCallback, 0);
+	            }
+	        }, _this.render = function () {
+	            var status = _this.state.status;
+
+	            if (status === UNMOUNTED) {
+	                return null;
+	            }
+
+	            var _this$props3 = _this.props,
+	                children = _this$props3.children,
+	                className = _this$props3.className,
+	                childProps = _objectWithoutProperties(_this$props3, ['children', 'className']);
+
+	            Object.keys(Transition.propTypes).forEach(function (key) {
+	                return delete childProps[key];
+	            });
+
+	            var transitionClassName = void 0;
+	            if (status === EXITED) {
+	                transitionClassName = _this.props.exitedClassName;
+	            } else if (status === ENTERING) {
+	                transitionClassName = _this.props.enteringClassName;
+	            } else if (status === ENTERED) {
+	                transitionClassName = _this.props.enteredClassName;
+	            } else if (status === EXITING) {
+	                transitionClassName = _this.props.exitingClassName;
+	            }
+
+	            var child = _react2.default.Children.only(children);
+	            return (0, _react.cloneElement)(child, _extends({}, childProps, {
+	                className: (0, _classnames2.default)(child.props.className, className, transitionClassName)
+	            }));
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
+	    }
+
+	    return Transition;
+	}(_react.Component);
+
+	Transition.propTypes = {
+	    /**
+	    * Show the component; triggers the enter or exit animation
+	    */in: _react.PropTypes.bool,
+
+	    /**
+	    * Unmount the component (remove it from the DOM) when it is not shown
+	    */
+	    unmountOnExit: _react.PropTypes.bool,
+
+	    /**
+	    * Run the enter animation when the component mounts, if it is initially
+	    * shown
+	    */
+	    transitionAppear: _react.PropTypes.bool,
+
+	    /**
+	    * A Timeout for the animation, in milliseconds, to ensure that a node doesn't
+	    * transition indefinately if the browser transitionEnd events are
+	    * canceled or interrupted.
+	    *
+	    * By default this is set to a high number (5 seconds) as a failsafe. You should consider
+	    * setting this to the duration of your animation (or a bit above it).
+	    */
+	    timeout: _react.PropTypes.number,
+
+	    /**
+	    * CSS class or classes applied when the component is exited
+	    */
+	    exitedClassName: _react.PropTypes.string,
+	    /**
+	    * CSS class or classes applied while the component is exiting
+	    */
+	    exitingClassName: _react.PropTypes.string,
+	    /**
+	    * CSS class or classes applied when the component is entered
+	    */
+	    enteredClassName: _react.PropTypes.string,
+	    /**
+	    * CSS class or classes applied while the component is entering
+	    */
+	    enteringClassName: _react.PropTypes.string,
+
+	    /**
+	    * Callback fired before the "entering" classes are applied
+	    */
+	    onEnter: _react.PropTypes.func,
+	    /**
+	    * Callback fired after the "entering" classes are applied
+	    */
+	    onEntering: _react.PropTypes.func,
+	    /**
+	    * Callback fired after the "enter" classes are applied
+	    */
+	    onEntered: _react.PropTypes.func,
+	    /**
+	    * Callback fired before the "exiting" classes are applied
+	    */
+	    onExit: _react.PropTypes.func,
+	    /**
+	    * Callback fired after the "exiting" classes are applied
+	    */
+	    onExiting: _react.PropTypes.func,
+	    /**
+	    * Callback fired after the "exited" classes are applied
+	    */
+	    onExited: _react.PropTypes.func
+	};
+	Transition.defaultProps = { in: false,
+	    unmountOnExit: false,
+	    transitionAppear: false,
+	    timeout: 5000,
+	    onEnter: _helpers.NOOP,
+	    onEntering: _helpers.NOOP,
+	    onEntered: _helpers.NOOP,
+	    onExit: _helpers.NOOP,
+	    onExiting: _helpers.NOOP,
+	    onExited: _helpers.NOOP
+	};
+	exports.default = Transition;
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var canUseDOM = __webpack_require__(40);
+
+	var has = Object.prototype.hasOwnProperty,
+	    transform = 'transform',
+	    transition = {},
+	    transitionTiming,
+	    transitionDuration,
+	    transitionProperty,
+	    transitionDelay;
+
+	if (canUseDOM) {
+	  transition = getTransitionProperties();
+
+	  transform = transition.prefix + transform;
+
+	  transitionProperty = transition.prefix + 'transition-property';
+	  transitionDuration = transition.prefix + 'transition-duration';
+	  transitionDelay = transition.prefix + 'transition-delay';
+	  transitionTiming = transition.prefix + 'transition-timing-function';
+	}
+
+	module.exports = {
+	  transform: transform,
+	  end: transition.end,
+	  property: transitionProperty,
+	  timing: transitionTiming,
+	  delay: transitionDelay,
+	  duration: transitionDuration
+	};
+
+	function getTransitionProperties() {
+	  var endEvent,
+	      prefix = '',
+	      transitions = {
+	    O: 'otransitionend',
+	    Moz: 'transitionend',
+	    Webkit: 'webkitTransitionEnd',
+	    ms: 'MSTransitionEnd'
+	  };
+
+	  var element = document.createElement('div');
+
+	  for (var vendor in transitions) if (has.call(transitions, vendor)) {
+	    if (element.style[vendor + 'TransitionProperty'] !== undefined) {
+	      prefix = '-' + vendor.toLowerCase() + '-';
+	      endEvent = transitions[vendor];
+	      break;
+	    }
+	  }
+
+	  if (!endEvent && element.style.transitionProperty !== undefined) endEvent = 'transitionend';
+
+	  return { end: endEvent, prefix: prefix };
+	}
+
+/***/ },
+/* 40 */
+/***/ function(module, exports) {
+
+	'use strict';
+	module.exports = !!(typeof window !== 'undefined' && window.document && window.document.createElement);
 
 /***/ }
 /******/ ])

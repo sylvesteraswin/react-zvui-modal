@@ -1,4 +1,5 @@
 import React, { PropTypes, Component } from 'react';  //eslint-disable-line no-unused-vars
+import { findDOMNode } from 'react-dom';
 import componentOrElement from 'react-prop-types/lib/componentOrElement';
 import css from 'dom-helpers/style';
 import cn from 'classnames';
@@ -11,9 +12,12 @@ import { ownerDocument, canUseDom, scrollbarSize } from './base/helpers'; //esli
 import ZvuiModalHeader from './components/ZvuiModalHeader';
 import ZvuiModalTitle from './components/ZvuiModalTitle';
 import ZvuiModalBody from './components/ZvuiModalBody';
+import ZvuiModalFade from './components/ZvuiModalFade';
 
 const baseIndex = {};
 const PREFIX = 'zvui-modal';
+const TRANSITION_DURATION = 300;
+const BACKDROP_TRANSITION_DURATION = 150;
 
 let getZIndex;
 
@@ -45,12 +49,19 @@ class ZvuiModal extends Component {
         ]),
         keyboard: PropTypes.bool,
         animate: PropTypes.bool,
+        transition: PropTypes.any,
         container: PropTypes.oneOfType([
             componentOrElement,
             PropTypes.func,
         ]),
         onShow: PropTypes.func,
         onHide: PropTypes.func,
+        onEnter: PropTypes.func,
+        onEntering: PropTypes.func,
+        onEntered: PropTypes.func,
+        onExit: PropTypes.func,
+        onExiting: PropTypes.func,
+        onExited: PropTypes.func,
         modalPrefix: PropTypes.func,
         dialogClassName: PropTypes.string,
         attentionClass: PropTypes.string,
@@ -60,6 +71,7 @@ class ZvuiModal extends Component {
         backdrop: true,
         keyboard: true,
         animate: true,
+        transition: true,
         container: canUseDom ? document.body : null,
         manager: BaseModal.defaultProps.manager,
     };
@@ -86,7 +98,7 @@ class ZvuiModal extends Component {
             const backdrop = document.createElement('div');
 
             modal.className = 'zvui-modal hide';
-            backdrop.className = 'zvui-backdrop hide';
+            backdrop.className = 'zvui-modal-backdrop hide';
 
             document.body.appendChild(modal);
             document.body.appendChild(backdrop);
@@ -110,6 +122,49 @@ class ZvuiModal extends Component {
         this.props.onHide();
     };
 
+    handleEntering = (...args) => {
+        this._show(...args);
+
+        if (this.props.onEntering) {
+            this.props.onEntering();
+        }
+    };
+
+    _show = () => {
+        if (this.props.show) {
+            this.setState(this._getStyles);
+        }
+    };
+
+    _getStyles = () => {
+        if (!canUseDom) {
+            return {};
+        }
+
+        const {
+            container,
+        } = this.props;
+
+        const node = findDOMNode(this.dialog);
+        const doc = ownerDocument(node);
+        const scrollHt = node.scrollHeight;
+        const bodyIsOverflowing = isOverflowing(container);
+        const modalIsOverflowing = scrollHt > doc.documentElement.clientHeight;
+
+        console.log(node.getBoundingClientRect());
+
+        return {
+            dialog: {
+                zIndex: getZIndex('modal'),
+                paddingRight: bodyIsOverflowing && !modalIsOverflowing ? scrollbarSize() : 0,
+                paddingLeft: !bodyIsOverflowing && modalIsOverflowing ? scrollbarSize() : 0,
+            },
+            backdrop: {
+                zIndex: getZIndex('backdrop'),
+            },
+        };
+    };
+
     render = () => {
         const {
             className,
@@ -118,6 +173,10 @@ class ZvuiModal extends Component {
             modalPrefix,
             dialogClassName,
             container,
+            onEnter,
+            onEntered,
+            onExit,
+            onExited,
             ...props
         } = this.props;
 
@@ -131,6 +190,11 @@ class ZvuiModal extends Component {
         const elementProps = findTheBlackSheeps(props, Object.keys(ZvuiModal.propTypes));
 
         const prefix = modalPrefix || this.getDefaultPrefix();
+        let transition;
+
+        if (props.transition === true) {
+            transition = ZvuiModalFade;
+        }
 
         const modal = (
             <div
@@ -138,7 +202,7 @@ class ZvuiModal extends Component {
                 ref={r => this.dialog = r}
                 style={dialog}
                 className={cn(className, prefix, {
-                    in: props.show,
+                    in: props.show && !transition,
                 })}
                 onClick={this.props.backdrop ? e => this.handleBackdropClick(e) : null}
             >
@@ -177,11 +241,20 @@ class ZvuiModal extends Component {
                 show={props.show}
                 onHide={props.onHide}
                 onShow={props.onShow}
+                onEnter={onEnter}
+                onEntering={this.handleEntering}
+                onEntered={onEntered}
+                onExit={onExit}
+                onExsiting={this.handleExiting}
+                onExited={onExited}
                 backdropStyle={backdrop}
+                transition={transition}
                 backdropClassName={cn(`${PREFIX}-backdrop`, {
                     in: props.show,
                 })}
                 containerClassName={`${PREFIX}-open`}
+                dialogTransitionTimeout={TRANSITION_DURATION}
+                backdropTransitionTimeout={BACKDROP_TRANSITION_DURATION}
             >
                 {modal}
             </BaseModal>

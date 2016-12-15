@@ -1,16 +1,22 @@
 import React, {cloneElement, Component, PropTypes} from 'react';
 import componentOrElement from 'react-prop-types/lib/componentOrElement';
+import elementType from 'react-prop-types/lib/elementType';
 import warning from 'warning';
 
 import Teleport from 'react-teleport-me';
 import AttachHandler from 'react-attach-handler'; //eslint-disable-line no-unused-vars
 import ModalManager from './ModalManager';
 
-import {ownerDocumentFn, canUseDom, contains, getContainer, activeElement} from './helpers';
+import {
+    ownerDocumentFn,
+    canUseDom,
+    contains,
+    getContainer,
+    activeElement,
+    NOOP,
+} from './helpers';
 
 const modalManager = new ModalManager();
-
-const NOOP = () => {};
 
 /**
  * Love them or hate them, `<Modal/>` provides a solid foundation for creating dialogs, lightboxes, or whatever else.
@@ -87,6 +93,24 @@ class Modal extends Component {
         onExited: PropTypes.func,
         // A modal manager instance used to track and manage the state of open Modals
         manager: PropTypes.object.isRequired,
+        // A <Transition /> component to use for the dialog and backdrop
+        transition: elementType,
+        // The `timeout` of the dialog transition if specified.
+        dialogTransitionTimeout: PropTypes.number,
+        // The `timeout` of the backdrop transition if specified.
+        backdropTransitionTimeout: PropTypes.number,
+        // Callback fired before the Modal transitions in
+        onEnter: React.PropTypes.func,
+        // Callback fired as the Modal begins to transition in
+        onEntering: React.PropTypes.func,
+        // Callback fired after the Modal finishes transitioning in
+        onEntered: React.PropTypes.func,
+        // Callback fired right before the Modal transitions out
+        onExit: React.PropTypes.func,
+        // Callback fired as the Modal begins to transition out
+        onExiting: React.PropTypes.func,
+        // Callback fired after the Modal finishes transitioning out
+        onExited: React.PropTypes.func,
     };
 
     static defaultProps = {
@@ -109,7 +133,7 @@ class Modal extends Component {
             this.setState({
                 exited: false,
             });
-        } else {
+        } else if (!nextProps.transition){
             // Otherwise let handleHidden take care of marking exited.
             this.setState({
                 exited: true,
@@ -131,10 +155,11 @@ class Modal extends Component {
     };
 
     componentDidUpdate = (prevProps) => {
-        let {
+        const {
+            transition,
         } = this.props;
 
-        if (prevProps.show && !this.props.show) {
+        if (prevProps.show && !this.props.show && !transition) {
             // Otherwise handleHidden will call this.
             this.onHide();
         } else if (!prevProps.show && this.props.show) {
@@ -145,11 +170,12 @@ class Modal extends Component {
     componentWillUnmount = () => {
         const {
             show,
+            transition,
         } = this.props;
 
         this._isMounted = false;
 
-        if (show || !this.state.exited) {
+        if (show || (transition && !this.state.exited)) {
             this.onHide();
         }
     };
@@ -173,15 +199,38 @@ class Modal extends Component {
         const {
             backdropStyle,
             backdropClassName,
+            renderBackdrop,
+            transition: Transition,
+            backdropTransitionTimeout,
         } = this.props;
 
-        const backdrop = (
+        const backdropRef = ref => this.backdrop = ref;
+
+        let backdrop = (
             <div
-                ref={ref => this.backdrop = ref}
+                ref={backdropRef}
                 style={backdropStyle}
                 className={backdropClassName}
                 onClick={this.handleBackdropClick} />
         );
+
+        if (Transition) {
+            backdrop = (
+                <Transition
+                    in={this.props.show}
+                    timeout={backdropTransitionTimeout}
+                >
+                    {
+                        renderBackdrop({
+                            ref: backdropRef,
+                            style: backdropStyle,
+                            className: backdropClassName,
+                            onClick: this.handleBackdropClick,
+                        })
+                    }
+                </Transition>
+            );
+        }
 
         return backdrop;
     };
@@ -260,7 +309,7 @@ class Modal extends Component {
         if (modalContent && autoFocus && !focusInModal) {
             this.lastFocus = current;
 
-            if (!modalContent.hasAttribute('tabIndex')) {
+            if (typeof modalContent.hasAttribute === 'function' && !modalContent.hasAttribute('tabIndex')) {
                 modalContent.setAttribute('tabIndex', -1);
                 warning(false, 'The modal content node does not accept focus. For the benefit of assistive technologies, the tabIndex of the node is being set to "-1".');
             }
@@ -308,15 +357,22 @@ class Modal extends Component {
             show,
             container,
             children,
+            transition: Transition,
             backdrop,
+            dialogTransitionTimeout,
             className,
             style,
+            onExit,
+            onExiting,
+            onEnter,
+            onEntering,
+            onEntered,
         } = this.props;
 
         let dialog = React.Children.only(children);
         const filterProps = this.omitProps(this.props, Modal.propTypes);
 
-        const mountModal = show || !this.state.exited;
+        const mountModal = show || (Transition && !this.state.exited);
         if (!mountModal) {
             return null;
         }
@@ -328,6 +384,25 @@ class Modal extends Component {
                 role: role === undefined ? 'document' : role,
                 tabIndex: tabIndex === null ? '-1' : tabIndex,
             });
+        }
+
+        if (Transition) {
+            dialog = (
+                <Transition
+                    transitionAppear
+                    unmountOnExit
+                    in={show}
+                    timeout={dialogTransitionTimeout}
+                    onExit={onExit}
+                    onExiting={onExiting}
+                    onExited={this.handleHidden}
+                    onEnter={onEnter}
+                    onEntering={onEntering}
+                    onEntered={onEntered}
+                >
+                    { dialog }
+                </Transition>
+            );
         }
 
         return (
@@ -342,18 +417,21 @@ class Modal extends Component {
                     style={style}
                     className={className}
                 >
-                    <AttachHandler
-                        target={'document'}
-                        events={{
-                            keyup: this.handleDocumentKeyUp,
-                            focus: {
-                                handler: this.enforceFocus,
-                                opts: {
-                                    capture: true,
+                    {
+                        show &&
+                        <AttachHandler
+                            target={'document'}
+                            events={{
+                                keyup: this.handleDocumentKeyUp,
+                                focus: {
+                                    handler: this.enforceFocus,
+                                    opts: {
+                                        capture: true,
+                                    },
                                 },
-                            },
-                        }}
-                        />
+                            }}
+                            />
+                    }
                     { backdrop && this.renderBackdrop() }
                     { dialog }
                 </div>
