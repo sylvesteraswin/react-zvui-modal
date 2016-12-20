@@ -9,7 +9,7 @@ const capitalizeFirstLetter = (string) => {
 
 const webpackConfig = {
   output: {
-    filename: pkg.name + '.js',
+    filename: `${pkg.name}.js`,
     library: capitalizeFirstLetter(camelCase(pkg.name)),
     library: pkg.moduleName,
     libraryTarget: 'umd'
@@ -32,7 +32,7 @@ const webpackConfig = {
     loaders: [{
       test: /\.(js|jsx)$/,
       exclude: /(node_modules)/,
-      loader: 'babel-loader'
+      loader: 'babel'
     }, {
       test: /\.(scss|css)$/,
       loader: ExtractTextPlugin.extract("style-loader", "css-loader")
@@ -47,18 +47,9 @@ const webpackConfig = {
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
-    })/*,
-    new webpack.optimize.UglifyJsPlugin({
-      sourceMap: false,
-      compress: {
-        warnings: false
-      },
-      output: {
-        comments: false
-      }
-    })*/,
+    }),
     new webpack.optimize.DedupePlugin(),
-    new ExtractTextPlugin("react-gallery-swiper.css", {allChunks: false})
+    new ExtractTextPlugin(`${pkg.name}.css`, {allChunks: false})
   ]
 };
 

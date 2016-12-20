@@ -49,6 +49,8 @@ class ZvuiModal extends Component {
             true,
             false,
         ]),
+        loader: PropTypes.bool,
+        loadComplete: PropTypes.bool,
         keyboard: PropTypes.bool,
         animate: PropTypes.bool,
         transition: PropTypes.any,
@@ -70,6 +72,8 @@ class ZvuiModal extends Component {
 
     static defaultProps = {
         backdrop: true,
+        loader: false,
+        loadComplete: false,
         keyboard: true,
         animate: true,
         transition: true,
@@ -104,19 +108,24 @@ class ZvuiModal extends Component {
 
             const modal = document.createElement('div');
             const backdrop = document.createElement('div');
+            const loader = document.createElement('div');
 
             modal.className = `${prefix} hide`;
             backdrop.className = `${prefix}-backdrop hide`;
+            loader.className = `${prefix}-loader hide`;
 
             document.body.appendChild(modal);
             document.body.appendChild(backdrop);
+            document.body.appendChild(loader);
 
             baseIndex.modal = +css(modal, 'z-index');
             baseIndex.backdrop = +css(backdrop, 'z-index');
+            baseIndex.loader = +css(loader, 'z-index');
             const zIndexFactor = baseIndex.modal - baseIndex.backdrop;
 
             document.body.removeChild(modal);
             document.body.removeChild(backdrop);
+            document.body.removeChild(loader);
 
             return (type) => baseIndex[type] + (zIndexFactor * (this.props.manager.modals.length - 1));
         })();
@@ -287,6 +296,8 @@ class ZvuiModal extends Component {
                 }}
                 container={container}
                 backdrop={props.backdrop}
+                loader={props.loader}
+                loadComplete={props.loadComplete}
                 show={props.show}
                 onHide={props.onHide}
                 onShow={props.onShow}
@@ -300,6 +311,12 @@ class ZvuiModal extends Component {
                 transition={transition}
                 onResize={this._show}
                 backdropClassName={cn(`${PREFIX}-backdrop`, {
+                    in: props.show,
+                })}
+                loaderClassName={cn(`${PREFIX}-loader`, {
+                    in: props.show,
+                })}
+                loaderIconClassName= {cn(`${PREFIX}-loader-icon`, {
                     in: props.show,
                 })}
                 containerClassName={`${PREFIX}-open`}

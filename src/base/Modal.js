@@ -63,8 +63,14 @@ class Modal extends Component {
             PropTypes.bool,
             PropTypes.oneOf(['static']),
         ]),
+        // Include a loader component
+        loader: PropTypes.bool,
+        // Flag to disable loading and show dialog
+        loadComplete: PropTypes.bool,
         // Function that returns a backdrop component
         renderBackdrop: PropTypes.func,
+        // Function that returns a loader component
+        renderLoader: PropTypes.func,
         // A callback fired when Esc key is pressed
         onEscapeKeyUp: PropTypes.func,
         // A callback fired when backdrop, is exists, is clicked
@@ -73,6 +79,12 @@ class Modal extends Component {
         backdropStyle: PropTypes.object,
         // A css class or classes for the backdrop component
         backdropClassName: PropTypes.string,
+        // A style object for the loader component
+        loaderStyle: PropTypes.object,
+        // A css class or classes for the loader component
+        loaderClassName: PropTypes.string,
+        // A css class or classes for the loader icon component
+        loaderIconClassName: PropTypes.string,
         // A css class or set of classes applied to the modal container when the modal is open, and removed when it is closed
         containerClassName: PropTypes.string,
         // Close the modal when escape key is pressed
@@ -101,39 +113,59 @@ class Modal extends Component {
         dialogTransitionTimeout: PropTypes.number,
         // The `timeout` of the backdrop transition if specified.
         backdropTransitionTimeout: PropTypes.number,
+        // The `timeout` of the loader transition if specified.
+        loaderTransitionTimeout: PropTypes.number,
         // Callback fired before the Modal transitions in
-        onEnter: React.PropTypes.func,
+        onEnter: PropTypes.func,
         // Callback fired as the Modal begins to transition in
-        onEntering: React.PropTypes.func,
+        onEntering: PropTypes.func,
         // Callback fired after the Modal finishes transitioning in
-        onEntered: React.PropTypes.func,
+        onEntered: PropTypes.func,
         // Callback fired right before the Modal transitions out
-        onExit: React.PropTypes.func,
+        onExit: PropTypes.func,
         // Callback fired as the Modal begins to transition out
-        onExiting: React.PropTypes.func,
+        onExiting: PropTypes.func,
         // Callback fired after the Modal finishes transitioning out
-        onExited: React.PropTypes.func,
+        onExited: PropTypes.func,
     };
 
     static defaultProps = {
         show: false,
         backdrop: true,
+        loader: false,
         keyboard: true,
         autoFocus: true,
         enforceFocus: true,
         onHide: NOOP,
         manager: modalManager,
         renderBackdrop: (props) => <div {...props} />,
+        renderLoader: (props) => (
+            <div {...props}>
+                <div
+                    className={props.loaderIconClassName} />
+            </div>
+        ),
     };
 
     state = {
         exited: !this.props.show,
+        loaded: !this.props.show,
     };
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.show) {
             this.setState({
                 exited: false,
+            }, () => {
+                if (nextProps.loadComplete && this.props.loader) {
+                    this.setState({
+                        loaded: true,
+                    });
+                } else {
+                    this.setState({
+                        loaded: !nextProps.loader,
+                    });
+                }
             });
         } else if (!nextProps.transition){
             // Otherwise let handleHidden take care of marking exited.
@@ -164,7 +196,7 @@ class Modal extends Component {
         if (prevProps.show && !this.props.show && !transition) {
             // Otherwise handleHidden will call this.
             this.onHide();
-        } else if (!prevProps.show && this.props.show) {
+        } else if (!prevProps.show && this.props.show || (this.props.loader && this.state.loaded)) {
             this.onShow();
         }
     };
@@ -195,6 +227,50 @@ class Modal extends Component {
             }
         });
         return newProps;
+    };
+
+    renderLoader = () => {
+        const {
+            loaderStyle,
+            loaderClassName,
+            loaderIconClassName,
+            renderLoader,
+            transition: Transition,
+            loaderTransitionTimeout,
+        } = this.props;
+
+        const loaderRef = ref => this.loader = ref;
+
+        let loader = (
+            <div
+                ref={loaderRef}
+                style={loaderStyle}
+                className={loaderClassName}
+            >
+                <div
+                    className={`${loaderIconClassName}`} />
+            </div>
+        );
+
+        if (Transition) {
+            loader = (
+                <Transition
+                    in={this.props.show}
+                    timeout={loaderTransitionTimeout}
+                >
+                    {
+                        renderLoader({
+                            ref: loaderRef,
+                            style: loaderStyle,
+                            className: loaderClassName,
+                            loaderIconClassName,
+                        })
+                    }
+                </Transition>
+            );
+        }
+
+        return loader;
     };
 
     renderBackdrop = () => {
@@ -262,6 +338,7 @@ class Modal extends Component {
     handleHidden = (...args) => {
         this.setState({
             exited: true,
+            loaded: !this.props.show,
         });
         this.onHide();
 
@@ -284,7 +361,7 @@ class Modal extends Component {
         }
     };
 
-    handleDocumentKeyUp = (e) => {
+    handlesDocumentKeyUp = (e) => {
         if (this.props.keyboard && e.keyCode === 27 && this.isTopModal()) {
             if (this.props.onEscapeKeyUp) {
                 this.props.onEscapeKeyUp();
@@ -312,7 +389,7 @@ class Modal extends Component {
 
         const modalContent = this.getDialogElement();
         const current = activeElement(ownerDocumentFn(this));
-        const focusInModal = current && contains(modalContent, current);
+        const focusInModal = current && modalContent && contains(modalContent, current);
 
         if (modalContent && autoFocus && !focusInModal) {
             this.lastFocus = current;
@@ -367,6 +444,7 @@ class Modal extends Component {
             children,
             transition: Transition,
             backdrop,
+            loader,
             dialogTransitionTimeout,
             className,
             style,
@@ -376,6 +454,10 @@ class Modal extends Component {
             onEntering,
             onEntered,
         } = this.props;
+
+        const {
+            loaded,
+        } = this.state;
 
         let dialog = React.Children.only(children);
         const filterProps = this.omitProps(this.props, Modal.propTypes);
@@ -399,7 +481,7 @@ class Modal extends Component {
                 <Transition
                     transitionAppear
                     unmountOnExit
-                    in={show}
+                    in={show && loaded}
                     timeout={dialogTransitionTimeout}
                     onExit={onExit}
                     onExiting={onExiting}
@@ -431,7 +513,7 @@ class Modal extends Component {
                             target={'window'}
                             events={{
                                 resize: this.handleResize,
-                                keyup: this.handleDocumentKeyUp,
+                                keyup: this.handlesDocumentKeyUp,
                                 focus: {
                                     handler: this.enforceFocus,
                                     opts: {
@@ -442,6 +524,7 @@ class Modal extends Component {
                             />
                     }
                     { backdrop && this.renderBackdrop() }
+                    { loader && !loaded && this.renderLoader() }
                     { dialog }
                 </div>
             </Teleport>

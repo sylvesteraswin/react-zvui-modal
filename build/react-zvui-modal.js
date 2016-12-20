@@ -102,25 +102,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _Modal2 = _interopRequireDefault(_Modal);
 
-	var _isOverflowing = __webpack_require__(30);
+	var _isOverflowing = __webpack_require__(25);
 
 	var _isOverflowing2 = _interopRequireDefault(_isOverflowing);
 
-	var _helpers = __webpack_require__(31);
+	var _helpers = __webpack_require__(26);
 
-	var _ZvuiModalHeader = __webpack_require__(33);
+	var _ZvuiModalHeader = __webpack_require__(28);
 
 	var _ZvuiModalHeader2 = _interopRequireDefault(_ZvuiModalHeader);
 
-	var _ZvuiModalTitle = __webpack_require__(35);
+	var _ZvuiModalTitle = __webpack_require__(30);
 
 	var _ZvuiModalTitle2 = _interopRequireDefault(_ZvuiModalTitle);
 
-	var _ZvuiModalBody = __webpack_require__(36);
+	var _ZvuiModalBody = __webpack_require__(31);
 
 	var _ZvuiModalBody2 = _interopRequireDefault(_ZvuiModalBody);
 
-	var _ZvuiModalFade = __webpack_require__(37);
+	var _ZvuiModalFade = __webpack_require__(32);
 
 	var _ZvuiModalFade2 = _interopRequireDefault(_ZvuiModalFade);
 
@@ -213,6 +213,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    large: _react.PropTypes.bool,
 	    lg: _react.PropTypes.bool,
 	    backdrop: _react.PropTypes.oneOf(['static', true, false]),
+	    loader: _react.PropTypes.bool,
+	    loadComplete: _react.PropTypes.bool,
 	    keyboard: _react.PropTypes.bool,
 	    animate: _react.PropTypes.bool,
 	    transition: _react.PropTypes.any,
@@ -230,6 +232,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	ZvuiModal.defaultProps = {
 	    backdrop: true,
+	    loader: false,
+	    loadComplete: false,
 	    keyboard: true,
 	    animate: true,
 	    transition: true,
@@ -267,19 +271,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var modal = document.createElement('div');
 	            var backdrop = document.createElement('div');
+	            var loader = document.createElement('div');
 
 	            modal.className = prefix + ' hide';
 	            backdrop.className = prefix + '-backdrop hide';
+	            loader.className = prefix + '-loader hide';
 
 	            document.body.appendChild(modal);
 	            document.body.appendChild(backdrop);
+	            document.body.appendChild(loader);
 
 	            baseIndex.modal = +(0, _style2.default)(modal, 'z-index');
 	            baseIndex.backdrop = +(0, _style2.default)(backdrop, 'z-index');
+	            baseIndex.loader = +(0, _style2.default)(loader, 'z-index');
 	            var zIndexFactor = baseIndex.modal - baseIndex.backdrop;
 
 	            document.body.removeChild(modal);
 	            document.body.removeChild(backdrop);
+	            document.body.removeChild(loader);
 
 	            return function (type) {
 	                return baseIndex[type] + zIndexFactor * (_this2.props.manager.modals.length - 1);
@@ -430,6 +439,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            container: container,
 	            backdrop: props.backdrop,
+	            loader: props.loader,
+	            loadComplete: props.loadComplete,
 	            show: props.show,
 	            onHide: props.onHide,
 	            onShow: props.onShow,
@@ -443,6 +454,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            transition: transition,
 	            onResize: _this2._show,
 	            backdropClassName: (0, _classnames2.default)(PREFIX + '-backdrop', {
+	                in: props.show
+	            }),
+	            loaderClassName: (0, _classnames2.default)(PREFIX + '-loader', {
+	                in: props.show
+	            }),
+	            loaderIconClassName: (0, _classnames2.default)(PREFIX + '-loader-icon', {
 	                in: props.show
 	            }),
 	            containerClassName: PREFIX + '-open',
@@ -1281,11 +1298,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _reactAttachHandler2 = _interopRequireDefault(_reactAttachHandler);
 
-	var _ModalManager = __webpack_require__(25);
+	var _ModalManager = __webpack_require__(20);
 
 	var _ModalManager2 = _interopRequireDefault(_ModalManager);
 
-	var _helpers = __webpack_require__(31);
+	var _helpers = __webpack_require__(26);
 
 	function _interopRequireDefault(obj) {
 	    return obj && obj.__esModule ? obj : { default: obj };
@@ -1377,8 +1394,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    onResize: _react.PropTypes.func,
 	    // Include a backdrop component
 	    backdrop: _react.PropTypes.oneOfType([_react.PropTypes.bool, _react.PropTypes.oneOf(['static'])]),
+	    // Include a loader component
+	    loader: _react.PropTypes.bool,
+	    // Flag to disable loading and show dialog
+	    loadComplete: _react.PropTypes.bool,
 	    // Function that returns a backdrop component
 	    renderBackdrop: _react.PropTypes.func,
+	    // Function that returns a loader component
+	    renderLoader: _react.PropTypes.func,
 	    // A callback fired when Esc key is pressed
 	    onEscapeKeyUp: _react.PropTypes.func,
 	    // A callback fired when backdrop, is exists, is clicked
@@ -1387,6 +1410,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    backdropStyle: _react.PropTypes.object,
 	    // A css class or classes for the backdrop component
 	    backdropClassName: _react.PropTypes.string,
+	    // A style object for the loader component
+	    loaderStyle: _react.PropTypes.object,
+	    // A css class or classes for the loader component
+	    loaderClassName: _react.PropTypes.string,
+	    // A css class or classes for the loader icon component
+	    loaderIconClassName: _react.PropTypes.string,
 	    // A css class or set of classes applied to the modal container when the modal is open, and removed when it is closed
 	    containerClassName: _react.PropTypes.string,
 	    // Close the modal when escape key is pressed
@@ -1414,11 +1443,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // The `timeout` of the dialog transition if specified.
 	    dialogTransitionTimeout: _react.PropTypes.number,
 	    // The `timeout` of the backdrop transition if specified.
-	    backdropTransitionTimeout: _react.PropTypes.number
-	}, _defineProperty(_extends2, 'onEnter', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onEntering', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onEntered', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onExit', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onExiting', _react2.default.PropTypes.func), _defineProperty(_extends2, 'onExited', _react2.default.PropTypes.func), _extends2));
+	    backdropTransitionTimeout: _react.PropTypes.number,
+	    // The `timeout` of the loader transition if specified.
+	    loaderTransitionTimeout: _react.PropTypes.number
+	}, _defineProperty(_extends2, 'onEnter', _react.PropTypes.func), _defineProperty(_extends2, 'onEntering', _react.PropTypes.func), _defineProperty(_extends2, 'onEntered', _react.PropTypes.func), _defineProperty(_extends2, 'onExit', _react.PropTypes.func), _defineProperty(_extends2, 'onExiting', _react.PropTypes.func), _defineProperty(_extends2, 'onExited', _react.PropTypes.func), _extends2));
 	Modal.defaultProps = {
 	    show: false,
 	    backdrop: true,
+	    loader: false,
 	    keyboard: true,
 	    autoFocus: true,
 	    enforceFocus: true,
@@ -1426,6 +1458,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    manager: modalManager,
 	    renderBackdrop: function renderBackdrop(props) {
 	        return _react2.default.createElement('div', props);
+	    },
+	    renderLoader: function renderLoader(props) {
+	        return _react2.default.createElement('div', props, _react2.default.createElement('div', {
+	            className: props.loaderIconClassName }));
 	    }
 	};
 
@@ -1433,13 +1469,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _this2 = this;
 
 	    this.state = {
-	        exited: !this.props.show
+	        exited: !this.props.show,
+	        loaded: !this.props.show
 	    };
 
 	    this.componentWillReceiveProps = function (nextProps) {
 	        if (nextProps.show) {
 	            _this2.setState({
 	                exited: false
+	            }, function () {
+	                if (nextProps.loadComplete && _this2.props.loader) {
+	                    _this2.setState({
+	                        loaded: true
+	                    });
+	                } else {
+	                    _this2.setState({
+	                        loaded: !nextProps.loader
+	                    });
+	                }
 	            });
 	        } else if (!nextProps.transition) {
 	            // Otherwise let handleHidden take care of marking exited.
@@ -1468,7 +1515,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (prevProps.show && !_this2.props.show && !transition) {
 	            // Otherwise handleHidden will call this.
 	            _this2.onHide();
-	        } else if (!prevProps.show && _this2.props.show) {
+	        } else if (!prevProps.show && _this2.props.show || _this2.props.loader && _this2.state.loaded) {
 	            _this2.onShow();
 	        }
 	    };
@@ -1500,13 +1547,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return newProps;
 	    };
 
-	    this.renderBackdrop = function () {
+	    this.renderLoader = function () {
 	        var _props2 = _this2.props,
-	            backdropStyle = _props2.backdropStyle,
-	            backdropClassName = _props2.backdropClassName,
-	            renderBackdrop = _props2.renderBackdrop,
+	            loaderStyle = _props2.loaderStyle,
+	            loaderClassName = _props2.loaderClassName,
+	            loaderIconClassName = _props2.loaderIconClassName,
+	            renderLoader = _props2.renderLoader,
 	            Transition = _props2.transition,
-	            backdropTransitionTimeout = _props2.backdropTransitionTimeout;
+	            loaderTransitionTimeout = _props2.loaderTransitionTimeout;
+
+	        var loaderRef = function loaderRef(ref) {
+	            return _this2.loader = ref;
+	        };
+
+	        var loader = _react2.default.createElement('div', {
+	            ref: loaderRef,
+	            style: loaderStyle,
+	            className: loaderClassName
+	        }, _react2.default.createElement('div', {
+	            className: '' + loaderIconClassName }));
+
+	        if (Transition) {
+	            loader = _react2.default.createElement(Transition, {
+	                'in': _this2.props.show,
+	                timeout: loaderTransitionTimeout
+	            }, renderLoader({
+	                ref: loaderRef,
+	                style: loaderStyle,
+	                className: loaderClassName,
+	                loaderIconClassName: loaderIconClassName
+	            }));
+	        }
+
+	        return loader;
+	    };
+
+	    this.renderBackdrop = function () {
+	        var _props3 = _this2.props,
+	            backdropStyle = _props3.backdropStyle,
+	            backdropClassName = _props3.backdropClassName,
+	            renderBackdrop = _props3.renderBackdrop,
+	            Transition = _props3.transition,
+	            backdropTransitionTimeout = _props3.backdropTransitionTimeout;
 
 	        var backdropRef = function backdropRef(ref) {
 	            return _this2.backdrop = ref;
@@ -1557,14 +1639,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    this.handleHidden = function () {
 	        _this2.setState({
-	            exited: true
+	            exited: true,
+	            loaded: !_this2.props.show
 	        });
 	        _this2.onHide();
 
 	        if (_this2.props.onExited) {
-	            var _props3;
+	            var _props4;
 
-	            (_props3 = _this2.props).onExited.apply(_props3, arguments);
+	            (_props4 = _this2.props).onExited.apply(_props4, arguments);
 	        }
 	    };
 
@@ -1582,7 +1665,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 
-	    this.handleDocumentKeyUp = function (e) {
+	    this.handlesDocumentKeyUp = function (e) {
 	        if (_this2.props.keyboard && e.keyCode === 27 && _this2.isTopModal()) {
 	            if (_this2.props.onEscapeKeyUp) {
 	                _this2.props.onEscapeKeyUp();
@@ -1608,7 +1691,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var modalContent = _this2.getDialogElement();
 	        var current = (0, _helpers.activeElement)((0, _helpers.ownerDocumentFn)(_this2));
-	        var focusInModal = current && (0, _helpers.contains)(modalContent, current);
+	        var focusInModal = current && modalContent && (0, _helpers.contains)(modalContent, current);
 
 	        if (modalContent && autoFocus && !focusInModal) {
 	            _this2.lastFocus = current;
@@ -1655,20 +1738,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    this.render = function () {
-	        var _props4 = _this2.props,
-	            show = _props4.show,
-	            container = _props4.container,
-	            children = _props4.children,
-	            Transition = _props4.transition,
-	            backdrop = _props4.backdrop,
-	            dialogTransitionTimeout = _props4.dialogTransitionTimeout,
-	            className = _props4.className,
-	            style = _props4.style,
-	            onExit = _props4.onExit,
-	            onExiting = _props4.onExiting,
-	            onEnter = _props4.onEnter,
-	            onEntering = _props4.onEntering,
-	            onEntered = _props4.onEntered;
+	        var _props5 = _this2.props,
+	            show = _props5.show,
+	            container = _props5.container,
+	            children = _props5.children,
+	            Transition = _props5.transition,
+	            backdrop = _props5.backdrop,
+	            loader = _props5.loader,
+	            dialogTransitionTimeout = _props5.dialogTransitionTimeout,
+	            className = _props5.className,
+	            style = _props5.style,
+	            onExit = _props5.onExit,
+	            onExiting = _props5.onExiting,
+	            onEnter = _props5.onEnter,
+	            onEntering = _props5.onEntering,
+	            onEntered = _props5.onEntered;
+	        var loaded = _this2.state.loaded;
 
 	        var dialog = _react2.default.Children.only(children);
 	        var filterProps = _this2.omitProps(_this2.props, Modal.propTypes);
@@ -1693,7 +1778,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dialog = _react2.default.createElement(Transition, {
 	                transitionAppear: true,
 	                unmountOnExit: true,
-	                'in': show,
+	                'in': show && loaded,
 	                timeout: dialogTransitionTimeout,
 	                onExit: onExit,
 	                onExiting: onExiting,
@@ -1717,7 +1802,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            target: 'window',
 	            events: {
 	                resize: _this2.handleResize,
-	                keyup: _this2.handleDocumentKeyUp,
+	                keyup: _this2.handlesDocumentKeyUp,
 	                focus: {
 	                    handler: _this2.enforceFocus,
 	                    opts: {
@@ -1725,7 +1810,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 	                }
 	            }
-	        }), backdrop && _this2.renderBackdrop(), dialog));
+	        }), backdrop && _this2.renderBackdrop(), loader && !loaded && _this2.renderLoader(), dialog));
 	    };
 	};
 
@@ -1839,351 +1924,420 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(20).default;
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory(__webpack_require__(2), __webpack_require__(3));
+		else if(typeof define === 'function' && define.amd)
+			define(["react", "react-dom"], factory);
+		else if(typeof exports === 'object')
+			exports["Teleport"] = factory(require("react"), require("react-dom"));
+		else
+			root["Teleport"] = factory(root["React"], root["ReactDOM"]);
+	})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_3__) {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
 
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId])
+	/******/ 			return installedModules[moduleId].exports;
+
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			exports: {},
+	/******/ 			id: moduleId,
+	/******/ 			loaded: false
+	/******/ 		};
+
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.loaded = true;
+
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+
+
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "";
+
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(0);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		module.exports = __webpack_require__(1).default;
+
+	/***/ },
+	/* 1 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+		Object.defineProperty(exports, "__esModule", {
+		    value: true
+		});
+		exports.DelayRenderFactory = undefined;
+
+		var _class, _temp2; //eslint-disable-line no-unused-vars
+
+
+		var _react = __webpack_require__(2);
+
+		var _react2 = _interopRequireDefault(_react);
+
+		var _reactDom = __webpack_require__(3);
+
+		var _reactDom2 = _interopRequireDefault(_reactDom);
+
+		var _classnames = __webpack_require__(4);
+
+		var _classnames2 = _interopRequireDefault(_classnames);
+
+		var _DelayRenderFactory2 = __webpack_require__(5);
+
+		var _DelayRenderFactory3 = _interopRequireDefault(_DelayRenderFactory2);
+
+		function _interopRequireDefault(obj) {
+		    return obj && obj.__esModule ? obj : { default: obj };
+		}
+
+		function _classCallCheck(instance, Constructor) {
+		    if (!(instance instanceof Constructor)) {
+		        throw new TypeError("Cannot call a class as a function");
+		    }
+		}
+
+		function _possibleConstructorReturn(self, call) {
+		    if (!self) {
+		        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+		    }return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+		}
+
+		function _inherits(subClass, superClass) {
+		    if (typeof superClass !== "function" && superClass !== null) {
+		        throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
+		    }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+		}
+
+		var getContainer = function getContainer(container) {
+		    var _container = typeof container === 'function' ? container() : container;
+		    return _reactDom2.default.findDOMNode(_container) || document.body;
+		};
+
+		var BASE_CLASS = 'zvui';
+
+		var Teleport = (_temp2 = _class = function (_Component) {
+		    _inherits(Teleport, _Component);
+
+		    function Teleport() {
+		        var _ref;
+
+		        var _temp, _this, _ret;
+
+		        _classCallCheck(this, Teleport);
+
+		        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		            args[_key] = arguments[_key];
+		        }
+
+		        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Teleport.__proto__ || Object.getPrototypeOf(Teleport)).call.apply(_ref, [this].concat(args))), _this), _this.componentDidMount = function () {
+		            _this._renderOverlay();
+		        }, _this.componentWillReceiveProps = function (nextProps) {
+		            if (_this._overlayTarget && nextProps.container !== _this.props.container) {
+		                _this._teleportContainerNode.removeChild(_this._overlayTarget);
+		                _this._teleportContainerNode = getContainer(nextProps.container);
+		                _this._teleportContainerNode.appendChild(_this._overlayTarget);
+		            }
+		        }, _this.componentDidUpdate = function () {
+		            _this._renderOverlay();
+		        }, _this.componentWillUnmount = function () {
+		            _this._unrenderOverlay();
+		            _this._unmountOverlayTarget();
+		        }, _this._renderOverlay = function () {
+		            var overlay = !_this.props.children ? null : _react2.default.Children.only(_this.props.children);
+
+		            if (overlay !== null) {
+		                _this._mountOverlayTarget();
+		                _this._overlayInstance = _reactDom2.default.unstable_renderSubtreeIntoContainer(_this, overlay, _this._overlayTarget);
+		            } else {
+		                _this._unrenderOverlay();
+		                _this._unmountOverlayTarget();
+		            }
+		        }, _this._mountOverlayTarget = function () {
+		            if (!_this._overlayTarget) {
+		                _this._overlayTarget = document.createElement('div');
+		                _this._overlayTarget.className = (0, _classnames2.default)(BASE_CLASS, _this.props.className);
+		                _this._teleportContainerNode = getContainer(_this.props.container);
+		                _this._teleportContainerNode.appendChild(_this._overlayTarget);
+		            }
+		        }, _this._unrenderOverlay = function () {
+		            if (_this._overlayTarget) {
+		                _reactDom2.default.unmountComponentAtNode(_this._overlayTarget);
+		                _this._overlayInstance = null;
+		            }
+		        }, _this._unmountOverlayTarget = function () {
+		            if (_this._overlayTarget) {
+		                _this._teleportContainerNode.removeChild(_this._overlayTarget);
+		                _this._overlayTarget = null;
+		            }
+		            _this._teleportContainerNode = null;
+		        }, _this.getMountNode = function () {
+		            return _this._overlayTarget;
+		        }, _this.getOverlayDOMNode = function () {
+		            if (!_this.isMounted()) {
+		                throw new Error('getOverlayDOMNode(): A component must be mounted to have a DOM node.');
+		            }
+
+		            if (_this._overlayInstance) {
+		                if (_this._overlayTarget.getWrappedDOMNode) {
+		                    return _this._overlayInstance.getWrappedDOMNode();
+		                } else {
+		                    return _reactDom2.default.findDOMNode(_this._overlayInstance);
+		                }
+		            }
+		            return null;
+		        }, _this.render = function () {
+		            return null;
+		        }, _temp), _possibleConstructorReturn(_this, _ret);
+		    }
+
+		    return Teleport;
+		}(_react.Component), _class.propTypes = {
+		    children: _react.PropTypes.any,
+		    container: _react.PropTypes.any,
+		    lockBody: _react.PropTypes.bool,
+		    className: _react.PropTypes.string
+		}, _class.defaultProps = {
+		    lockBody: true,
+		    className: ''
+		}, _temp2);
+		exports.default = Teleport;
+		exports.DelayRenderFactory = _DelayRenderFactory3.default;
+
+	/***/ },
+	/* 2 */
+	/***/ function(module, exports) {
+
+		module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+	/***/ },
+	/* 3 */
+	/***/ function(module, exports) {
+
+		module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
+
+	/***/ },
+	/* 4 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+		  Copyright (c) 2016 Jed Watson.
+		  Licensed under the MIT License (MIT), see
+		  http://jedwatson.github.io/classnames
+		*/
+		/* global define */
+
+		(function () {
+			'use strict';
+
+			var hasOwn = {}.hasOwnProperty;
+
+			function classNames () {
+				var classes = [];
+
+				for (var i = 0; i < arguments.length; i++) {
+					var arg = arguments[i];
+					if (!arg) continue;
+
+					var argType = typeof arg;
+
+					if (argType === 'string' || argType === 'number') {
+						classes.push(arg);
+					} else if (Array.isArray(arg)) {
+						classes.push(classNames.apply(null, arg));
+					} else if (argType === 'object') {
+						for (var key in arg) {
+							if (hasOwn.call(arg, key) && arg[key]) {
+								classes.push(key);
+							}
+						}
+					}
+				}
+
+				return classes.join(' ');
+			}
+
+			if (typeof module !== 'undefined' && module.exports) {
+				module.exports = classNames;
+			} else if (true) {
+				// register as 'classnames', consistent with npm package name
+				!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+					return classNames;
+				}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+			} else {
+				window.classNames = classNames;
+			}
+		}());
+
+
+	/***/ },
+	/* 5 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+		Object.defineProperty(exports, "__esModule", {
+		    value: true
+		});
+
+		var _extends = Object.assign || function (target) {
+		    for (var i = 1; i < arguments.length; i++) {
+		        var source = arguments[i];for (var key in source) {
+		            if (Object.prototype.hasOwnProperty.call(source, key)) {
+		                target[key] = source[key];
+		            }
+		        }
+		    }return target;
+		};
+
+		var _react = __webpack_require__(2);
+
+		var _react2 = _interopRequireDefault(_react);
+
+		function _interopRequireDefault(obj) {
+		    return obj && obj.__esModule ? obj : { default: obj };
+		}
+
+		function _objectWithoutProperties(obj, keys) {
+		    var target = {};for (var i in obj) {
+		        if (keys.indexOf(i) >= 0) continue;if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;target[i] = obj[i];
+		    }return target;
+		}
+
+		function _classCallCheck(instance, Constructor) {
+		    if (!(instance instanceof Constructor)) {
+		        throw new TypeError("Cannot call a class as a function");
+		    }
+		}
+
+		function _possibleConstructorReturn(self, call) {
+		    if (!self) {
+		        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+		    }return call && ((typeof call === "undefined" ? "undefined" : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+		}
+
+		function _inherits(subClass, superClass) {
+		    if (typeof superClass !== "function" && superClass !== null) {
+		        throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === "undefined" ? "undefined" : _typeof(superClass)));
+		    }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+		}
+
+		// eslint-disable-line no-unused-vars
+
+		var DelayRenderFactory = function DelayRenderFactory() {
+		    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { delay: 500 };
+		    return function (DelayComponent) {
+		        var _class, _temp2;
+
+		        // eslint-disable-line no-unused-vars
+		        return _temp2 = _class = function (_Component) {
+		            _inherits(DelayComponentRenderer, _Component);
+
+		            function DelayComponentRenderer() {
+		                var _ref;
+
+		                var _temp, _this, _ret;
+
+		                _classCallCheck(this, DelayComponentRenderer);
+
+		                for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		                    args[_key] = arguments[_key];
+		                }
+
+		                return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DelayComponentRenderer.__proto__ || Object.getPrototypeOf(DelayComponentRenderer)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+		                    active: _this.props.active,
+		                    rendered: _this.props.active
+		                }, _this.componentWillReceiveProps = function (nextProps) {
+		                    if (nextProps.active && !_this.props.active) {
+		                        _this.renderAndActivate();
+		                    }
+		                    if (!nextProps.active && _this.props.active) {
+		                        _this.deactivateAndUnrender();
+		                    }
+		                }, _this.renderAndActivate = function () {
+		                    if (_this.unrenderTimeout) {
+		                        clearTimeout(_this.unrenderTimeout);
+		                    }
+		                    _this.setState({
+		                        rendered: true,
+		                        active: false
+		                    }, function () {
+		                        setTimeout(function () {
+		                            return _this.setState({
+		                                active: true
+		                            });
+		                        }, _this.props.delay);
+		                    });
+		                }, _this.deactivateAndUnrender = function () {
+		                    _this.setState({
+		                        rendered: true,
+		                        active: false
+		                    }, function () {
+		                        _this.unrenderTimeout = setTimeout(function () {
+		                            _this.setState({
+		                                rendered: false
+		                            });
+		                            _this.unrenderTimeout = null;
+		                        }, _this.props.delay);
+		                    });
+		                }, _this.render = function () {
+		                    var _this$props = _this.props,
+		                        delay = _this$props.delay,
+		                        others = _objectWithoutProperties(_this$props, ['delay']);
+
+		                    var _this$state = _this.state,
+		                        active = _this$state.active,
+		                        rendered = _this$state.rendered;
+
+		                    return rendered ? _react2.default.createElement(DelayComponent, _extends({}, others, { active: active })) : null;
+		                }, _temp), _possibleConstructorReturn(_this, _ret);
+		            }
+
+		            return DelayComponentRenderer;
+		        }(_react.Component), _class.propTypes = {
+		            active: _react.PropTypes.bool.isRequired,
+		            children: _react.PropTypes.any,
+		            delay: _react.PropTypes.number
+		        }, _class.defaultProps = {
+		            delay: options.delay
+		        }, _temp2;
+		    };
+		};
+
+		exports.default = DelayRenderFactory;
+
+	/***/ }
+	/******/ ])
+	});
+	;
 
 /***/ },
 /* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.DelayRenderFactory = undefined;
-
-	var _class, _temp2; //eslint-disable-line no-unused-vars
-
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactDom = __webpack_require__(3);
-
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-
-	var _reactAddonsShallowCompare = __webpack_require__(21);
-
-	var _reactAddonsShallowCompare2 = _interopRequireDefault(_reactAddonsShallowCompare);
-
-	var _DelayRenderFactory2 = __webpack_require__(24);
-
-	var _DelayRenderFactory3 = _interopRequireDefault(_DelayRenderFactory2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var getContainer = function getContainer(container) {
-	    var _container = typeof container === 'function' ? container() : container;
-	    return _reactDom2.default.findDOMNode(_container) || document.body;
-	};
-
-	var Teleport = (_temp2 = _class = function (_Component) {
-	    _inherits(Teleport, _Component);
-
-	    function Teleport() {
-	        var _ref;
-
-	        var _temp, _this, _ret;
-
-	        _classCallCheck(this, Teleport);
-
-	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	            args[_key] = arguments[_key];
-	        }
-
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Teleport.__proto__ || Object.getPrototypeOf(Teleport)).call.apply(_ref, [this].concat(args))), _this), _this.componentDidMount = function () {
-	            _this._renderOverlay();
-	        }, _this.componentWillReceiveProps = function (nextProps) {
-	            if (_this._overlayTarget && nextProps.container !== _this.props.container) {
-	                _this._teleportContainerNode.removeChild(_this._overlayTarget);
-	                _this._teleportContainerNode = getContainer(nextProps.container);
-	                _this._teleportContainerNode.appendChild(_this._overlayTarget);
-	            }
-	        }, _this.componentDidUpdate = function () {
-	            _this._renderOverlay();
-	        }, _this.componentWillUnmount = function () {
-	            _this._unrenderOverlay();
-	            _this._unmountOverlayTarget();
-	        }, _this._renderOverlay = function () {
-	            var overlay = !_this.props.children ? null : _react2.default.Children.only(_this.props.children);
-
-	            if (overlay !== null) {
-	                _this._mountOverlayTarget();
-	                _this._overlayInstance = _reactDom2.default.unstable_renderSubtreeIntoContainer(_this, overlay, _this._overlayTarget);
-	            } else {
-	                _this._unrenderOverlay();
-	                _this._unmountOverlayTarget();
-	            }
-	        }, _this._mountOverlayTarget = function () {
-	            if (!_this._overlayTarget) {
-	                _this._overlayTarget = document.createElement('div');
-	                _this._teleportContainerNode = getContainer(_this.props.container);
-	                _this._teleportContainerNode.appendChild(_this._overlayTarget);
-	            }
-	        }, _this._unrenderOverlay = function () {
-	            if (_this._overlayTarget) {
-	                _reactDom2.default.unmountComponentAtNode(_this._overlayTarget);
-	                _this._overlayInstance = null;
-	            }
-	        }, _this._unmountOverlayTarget = function () {
-	            if (_this._overlayTarget) {
-	                _this._teleportContainerNode.removeChild(_this._overlayTarget);
-	                _this._overlayTarget = null;
-	            }
-	            _this._teleportContainerNode = null;
-	        }, _this.getMountNode = function () {
-	            return _this._overlayTarget;
-	        }, _this.getOverlayDOMNode = function () {
-	            if (!_this.isMounted()) {
-	                throw new Error('getOverlayDOMNode(): A component must be mounted to have a DOM node.');
-	            }
-
-	            if (_this._overlayInstance) {
-	                if (_this._overlayTarget.getWrappedDOMNode) {
-	                    return _this._overlayInstance.getWrappedDOMNode();
-	                } else {
-	                    return _reactDom2.default.findDOMNode(_this._overlayInstance);
-	                }
-	            }
-	            return null;
-	        }, _this.render = function () {
-	            return null;
-	        }, _temp), _possibleConstructorReturn(_this, _ret);
-	    }
-
-	    return Teleport;
-	}(_react.Component), _class.propTypes = {
-	    children: _react.PropTypes.any,
-	    container: _react.PropTypes.any,
-	    lockBody: _react.PropTypes.bool
-	}, _class.defaultProps = {
-	    lockBody: true
-	}, _temp2);
-	exports.default = Teleport;
-	exports.DelayRenderFactory = _DelayRenderFactory3.default;
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(22);
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 */
-
-	'use strict';
-
-	var shallowEqual = __webpack_require__(23);
-
-	/**
-	 * Does a shallow comparison for props and state.
-	 * See ReactComponentWithPureRenderMixin
-	 * See also https://facebook.github.io/react/docs/shallow-compare.html
-	 */
-	function shallowCompare(instance, nextProps, nextState) {
-	  return !shallowEqual(instance.props, nextProps) || !shallowEqual(instance.state, nextState);
-	}
-
-	module.exports = shallowCompare;
-
-/***/ },
-/* 23 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright (c) 2013-present, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @typechecks
-	 * 
-	 */
-
-	/*eslint-disable no-self-compare */
-
-	'use strict';
-
-	var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-	/**
-	 * inlined Object.is polyfill to avoid requiring consumers ship their own
-	 * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
-	 */
-	function is(x, y) {
-	  // SameValue algorithm
-	  if (x === y) {
-	    // Steps 1-5, 7-10
-	    // Steps 6.b-6.e: +0 != -0
-	    // Added the nonzero y check to make Flow happy, but it is redundant
-	    return x !== 0 || y !== 0 || 1 / x === 1 / y;
-	  } else {
-	    // Step 6.a: NaN == NaN
-	    return x !== x && y !== y;
-	  }
-	}
-
-	/**
-	 * Performs equality by iterating through keys on an object and returning false
-	 * when any key has values which are not strictly equal between the arguments.
-	 * Returns true when the values of all keys are strictly equal.
-	 */
-	function shallowEqual(objA, objB) {
-	  if (is(objA, objB)) {
-	    return true;
-	  }
-
-	  if (typeof objA !== 'object' || objA === null || typeof objB !== 'object' || objB === null) {
-	    return false;
-	  }
-
-	  var keysA = Object.keys(objA);
-	  var keysB = Object.keys(objB);
-
-	  if (keysA.length !== keysB.length) {
-	    return false;
-	  }
-
-	  // Test for A's keys different from B.
-	  for (var i = 0; i < keysA.length; i++) {
-	    if (!hasOwnProperty.call(objB, keysA[i]) || !is(objA[keysA[i]], objB[keysA[i]])) {
-	      return false;
-	    }
-	  }
-
-	  return true;
-	}
-
-	module.exports = shallowEqual;
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	//eslint-disable-line no-unused-vars
-
-	var DelayRenderFactory = function DelayRenderFactory() {
-	    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { delay: 500 };
-	    return function (DelayComponent) {
-	        var _class, _temp2;
-
-	        return _temp2 = _class = function (_Component) {
-	            _inherits(DelayComponentRenderer, _Component);
-
-	            function DelayComponentRenderer() {
-	                var _ref;
-
-	                var _temp, _this, _ret;
-
-	                _classCallCheck(this, DelayComponentRenderer);
-
-	                for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	                    args[_key] = arguments[_key];
-	                }
-
-	                return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = DelayComponentRenderer.__proto__ || Object.getPrototypeOf(DelayComponentRenderer)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-	                    active: _this.props.active,
-	                    rendered: _this.props.active
-	                }, _this.componentWillReceiveProps = function (nextProps) {
-	                    if (nextProps.active && !_this.props.active) {
-	                        _this.renderAndActivate();
-	                    }
-	                    if (!nextProps.active && _this.props.active) {
-	                        _this.deactivateAndUnrender();
-	                    }
-	                }, _this.renderAndActivate = function () {
-	                    if (_this.unrenderTimeout) {
-	                        clearTimeout(_this.unrenderTimeout);
-	                    }
-	                    _this.setState({
-	                        rendered: true,
-	                        active: false
-	                    }, function () {
-	                        setTimeout(function () {
-	                            return _this.setState({
-	                                active: true
-	                            });
-	                        }, _this.props.delay);
-	                    });
-	                }, _this.deactivateAndUnrender = function () {
-	                    _this.setState({
-	                        rendered: true,
-	                        active: false
-	                    }, function () {
-	                        _this.unrenderTimeout = setTimeout(function () {
-	                            _this.setState({
-	                                rendered: false
-	                            });
-	                            _this.unrenderTimeout = null;
-	                        }, _this.props.delay);
-	                    });
-	                }, _this.render = function () {
-	                    var _this$props = _this.props,
-	                        delay = _this$props.delay,
-	                        others = _objectWithoutProperties(_this$props, ['delay']);
-
-	                    var _this$state = _this.state,
-	                        active = _this$state.active,
-	                        rendered = _this$state.rendered;
-
-	                    return rendered ? _react2.default.createElement(DelayComponent, _extends({}, others, { active: active })) : null;
-	                }, _temp), _possibleConstructorReturn(_this, _ret);
-	            }
-
-	            return DelayComponentRenderer;
-	        }(_react.Component), _class.propTypes = {
-	            active: _react.PropTypes.bool.isRequired,
-	            children: _react.PropTypes.any,
-	            delay: _react.PropTypes.number
-	        }, _class.defaultProps = {
-	            delay: options.delay
-	        }, _temp2;
-	    };
-	};
-
-	exports.default = DelayRenderFactory;
-
-/***/ },
-/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -2204,17 +2358,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _style2 = _interopRequireDefault(_style);
 
-	var _class = __webpack_require__(26);
+	var _class = __webpack_require__(21);
 
 	var _class2 = _interopRequireDefault(_class);
 
-	var _isOverflowing = __webpack_require__(30);
+	var _isOverflowing = __webpack_require__(25);
 
 	var _isOverflowing2 = _interopRequireDefault(_isOverflowing);
 
-	var _helpers = __webpack_require__(31);
+	var _helpers = __webpack_require__(26);
 
-	var _manageHidden = __webpack_require__(32);
+	var _manageHidden = __webpack_require__(27);
 
 	function _interopRequireDefault(obj) {
 	    return obj && obj.__esModule ? obj : { default: obj };
@@ -2380,30 +2534,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ModalManager;
 
 /***/ },
-/* 26 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	module.exports = {
-	  addClass: __webpack_require__(27),
-	  removeClass: __webpack_require__(29),
-	  hasClass: __webpack_require__(28)
+	  addClass: __webpack_require__(22),
+	  removeClass: __webpack_require__(24),
+	  hasClass: __webpack_require__(23)
 	};
 
 /***/ },
-/* 27 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var hasClass = __webpack_require__(28);
+	var hasClass = __webpack_require__(23);
 
 	module.exports = function addClass(element, className) {
 	  if (element.classList) element.classList.add(className);else if (!hasClass(element)) element.className = element.className + ' ' + className;
 	};
 
 /***/ },
-/* 28 */
+/* 23 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2412,7 +2566,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 29 */
+/* 24 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2422,7 +2576,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 30 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -2430,7 +2584,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports.default = undefined;
 
-	var _helpers = __webpack_require__(31);
+	var _helpers = __webpack_require__(26);
 
 	var isBody = function isBody(node) {
 	    return node && node.tagName.toLowerCase() === 'body';
@@ -2453,7 +2607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = isOverflowing;
 
 /***/ },
-/* 31 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -2556,7 +2710,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.NOOP = NOOP;
 
 /***/ },
-/* 32 */
+/* 27 */
 /***/ function(module, exports) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -2610,7 +2764,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.showSiblings = showSiblings;
 
 /***/ },
-/* 33 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2637,7 +2791,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _ZvuiModalDismiss = __webpack_require__(34);
+	var _ZvuiModalDismiss = __webpack_require__(29);
 
 	var _ZvuiModalDismiss2 = _interopRequireDefault(_ZvuiModalDismiss);
 
@@ -2723,7 +2877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ZvuiModalHeader;
 
 /***/ },
-/* 34 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2824,7 +2978,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ZvuiModalDismiss;
 
 /***/ },
-/* 35 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -2902,7 +3056,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var prefix = modalPrefix || _this.context.getDefaultPrefix();
 
-	            return _react2.default.createElement('h4', _extends({}, props, {
+	            return _react2.default.createElement('h1', _extends({}, props, {
 	                className: (0, _classnames2.default)(className, prefix + '-title') }));
 	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
@@ -2919,7 +3073,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ZvuiModalTitle;
 
 /***/ },
-/* 36 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3016,7 +3170,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ZvuiModalBody;
 
 /***/ },
-/* 37 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Object.defineProperty(exports, "__esModule", {
@@ -3038,7 +3192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Transition = __webpack_require__(38);
+	var _Transition = __webpack_require__(33);
 
 	var _Transition2 = _interopRequireDefault(_Transition);
 
@@ -3059,7 +3213,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ZvuiModalFade;
 
 /***/ },
-/* 38 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -3085,7 +3239,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _reactDom = __webpack_require__(3);
 
-	var _properties = __webpack_require__(39);
+	var _properties = __webpack_require__(34);
 
 	var _properties2 = _interopRequireDefault(_properties);
 
@@ -3093,7 +3247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _classnames2 = _interopRequireDefault(_classnames);
 
-	var _helpers = __webpack_require__(31);
+	var _helpers = __webpack_require__(26);
 
 	function _interopRequireDefault(obj) {
 	    return obj && obj.__esModule ? obj : { default: obj };
@@ -3384,7 +3538,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    */
 	    onExited: _react.PropTypes.func
 	};
-	Transition.defaultProps = { in: false,
+	Transition.defaultProps = {
+	    in: false,
 	    unmountOnExit: false,
 	    transitionAppear: false,
 	    timeout: 5000,
@@ -3398,11 +3553,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Transition;
 
 /***/ },
-/* 39 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var canUseDOM = __webpack_require__(40);
+	var canUseDOM = __webpack_require__(35);
 
 	var has = Object.prototype.hasOwnProperty,
 	    transform = 'transform',
@@ -3458,7 +3613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 40 */
+/* 35 */
 /***/ function(module, exports) {
 
 	'use strict';

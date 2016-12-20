@@ -20,7 +20,7 @@ class ZvuiModalTitle extends Component {
         const prefix = modalPrefix || this.context.getDefaultPrefix();
 
         return (
-            <h4
+            <h1
                 {...props}
                 className={cn(className, `${prefix}-title`)} />
         );

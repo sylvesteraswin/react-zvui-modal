@@ -96,7 +96,8 @@ class Transition extends Component {
         onExited: PropTypes.func,
     };
 
-    static defaultProps = { in: false,
+    static defaultProps = {
+        in: false,
         unmountOnExit: false,
         transitionAppear: false,
         timeout: 5000,
@@ -111,7 +112,7 @@ class Transition extends Component {
     state = {
         status: (() => {
             let initialStatus;
-            if (this.props. in) {
+            if (this.props.in) {
                 initialStatus = this.props.transitionAppear
                     ? EXITED
                     : ENTERED;
@@ -132,7 +133,7 @@ class Transition extends Component {
     };
 
     componentWillReceiveProps = (nextProps) => {
-        if (nextProps. in && this.props.unmountOnExit) {
+        if (nextProps.in && this.props.unmountOnExit) {
             if (this.state.status === UNMOUNTED) {
                 // Start enter transition in componentDidUpdate.
                 this.setState({status: EXITED});
@@ -145,7 +146,7 @@ class Transition extends Component {
     componentDidUpdate = () => {
         const {status} = this.state;
 
-        if (this.props. in) {
+        if (this.props.in) {
             if (status === EXITING) {
                 this.performEnter(this.props);
             } else if (status === EXITED) {

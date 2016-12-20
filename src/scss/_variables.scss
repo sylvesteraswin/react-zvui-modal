@@ -33,8 +33,11 @@ $modal-backdrop-opacity:      .85;
 $modal-header-border-color:   #e5e5e5;
 $modal-footer-border-color:   $modal-header-border-color;
 
+$modal-loader-opacity:        1;
+
 $zindex-modal-background:     1040;
-$zindex-modal:                1050;
+$zindex-loader:               1050;
+$zindex-modal:                1060;
 
 $modal-lg:                    900px;
 $modal-md:                    600px;
