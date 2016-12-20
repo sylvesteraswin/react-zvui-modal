@@ -44,6 +44,7 @@ class ZvuiModal extends Component {
         sm: PropTypes.bool,
         large: PropTypes.bool,
         lg: PropTypes.bool,
+        full: PropTypes.bool,
         backdrop: PropTypes.oneOf([
             'static',
             true,

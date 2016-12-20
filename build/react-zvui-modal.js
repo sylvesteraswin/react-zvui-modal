@@ -212,6 +212,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    sm: _react.PropTypes.bool,
 	    large: _react.PropTypes.bool,
 	    lg: _react.PropTypes.bool,
+	    full: _react.PropTypes.bool,
 	    backdrop: _react.PropTypes.oneOf(['static', true, false]),
 	    loader: _react.PropTypes.bool,
 	    loadComplete: _react.PropTypes.bool,
