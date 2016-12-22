@@ -16,6 +16,7 @@ class ZvuiModalHeader extends Component {
     static contextTypes = {
         onModalHide: PropTypes.func,
         getDefaultPrefix: PropTypes.func,
+        outside: PropTypes.bool,
     }
 
     render = () => {
@@ -26,6 +27,10 @@ class ZvuiModalHeader extends Component {
             className,
             ...props
         } = this.props;
+
+        const {
+            outside,
+        } = this.context;
 
         const prefix = modalPrefix || this.context.getDefaultPrefix();
 
@@ -38,7 +43,7 @@ class ZvuiModalHeader extends Component {
                     closeButton &&
                     <ZvuiModalDismiss
                         className={cn(`${prefix}-close`, {
-                            'outside': !children || props.outside,
+                            'outside': !children || (props.outside && outside),
                         })}
                     >
                         <span>&times;</span>

@@ -174,18 +174,20 @@ class Transition extends Component {
         // Not this.props, because we might be about to receive new props.
         onEnter(node);
 
-        this.setSafeState({
-            status: ENTERING,
-        }, () => {
-            onEntering(node);
-            this.onTransitionEnd(node, () => {
-                this.setSafeState({
-                    status: ENTERED,
-                }, () => {
-                    onEntered(node);
+        setTimeout(() => {
+            this.setSafeState({
+                status: ENTERING,
+            }, () => {
+                onEntering(node);
+                this.onTransitionEnd(node, () => {
+                    this.setSafeState({
+                        status: ENTERED,
+                    }, () => {
+                        onEntered(node);
+                    });
                 });
             });
-        });
+        }, 0);
     };
 
     performExit = (props) => {

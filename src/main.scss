@@ -98,7 +98,6 @@
         // transform: translateX(-50%);
         @media #{$tablet} {
             width: $modal-md;
-            top: 1%;
             // This style will be effect only starting from tablet resolution
             &.#{$modal-prefix} {
                 &-sm {

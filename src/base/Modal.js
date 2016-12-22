@@ -2,8 +2,10 @@ import React, {cloneElement, Component, PropTypes} from 'react';
 import componentOrElement from 'react-prop-types/lib/componentOrElement';
 import elementType from 'react-prop-types/lib/elementType';
 import warning from 'warning';
+import cn from 'classnames';
 
 import Teleport from 'react-teleport-me';
+import { DelayRenderFactory } from 'react-teleport-me/lib/Teleport';
 import AttachHandler from 'react-attach-handler'; //eslint-disable-line no-unused-vars
 import ModalManager from './ModalManager';
 
@@ -50,11 +52,11 @@ class Modal extends Component {
             PropTypes.func,
         ]),
         // Set the visibility of the Modal
-        show: PropTypes.bool,
+        active: PropTypes.bool,
         // A callback fired when the Modal is opening
         onShow: PropTypes.func,
         // A callback fired when either the backdrop is clicked or the escape key is pressed
-        // But setting the prop `show` to false can be used to close the Modal
+        // But setting the prop `active` to false can be used to close the Modal
         onHide: PropTypes.func,
         // A callback fired when the window is resized
         onResize: PropTypes.func,
@@ -65,7 +67,7 @@ class Modal extends Component {
         ]),
         // Include a loader component
         loader: PropTypes.bool,
-        // Flag to disable loading and show dialog
+        // Flag to disable loading and active dialog
         loadComplete: PropTypes.bool,
         // Function that returns a backdrop component
         renderBackdrop: PropTypes.func,
@@ -130,7 +132,7 @@ class Modal extends Component {
     };
 
     static defaultProps = {
-        show: false,
+        active: false,
         backdrop: true,
         loader: false,
         keyboard: true,
@@ -148,22 +150,18 @@ class Modal extends Component {
     };
 
     state = {
-        exited: !this.props.show,
-        loaded: !this.props.show,
+        exited: !this.props.active,
+        loaded: !this.props.loader,
     };
 
     componentWillReceiveProps = (nextProps) => {
-        if (nextProps.show) {
+        if (nextProps.active) {
             this.setState({
                 exited: false,
             }, () => {
                 if (nextProps.loadComplete && this.props.loader) {
                     this.setState({
                         loaded: true,
-                    });
-                } else {
-                    this.setState({
-                        loaded: !nextProps.loader,
                     });
                 }
             });
@@ -176,14 +174,14 @@ class Modal extends Component {
     };
 
     componentWillUpdate = (nextProps) => {
-        if (!this.props.show && nextProps.show) {
+        if (!this.props.active && nextProps.active) {
             this.checkForFocus();
         }
     };
 
     componentDidMount = () => {
         this._isMounted = true;
-        if (this.props.show) {
+        if (this.props.active) {
             this.onShow();
         }
     };
@@ -193,23 +191,23 @@ class Modal extends Component {
             transition,
         } = this.props;
 
-        if (prevProps.show && !this.props.show && !transition) {
+        if (prevProps.active && !this.props.active && !transition) {
             // Otherwise handleHidden will call this.
             this.onHide();
-        } else if (!prevProps.show && this.props.show || (this.props.loader && this.state.loaded)) {
+        } else if (!prevProps.active && this.props.active) {
             this.onShow();
         }
     };
 
     componentWillUnmount = () => {
         const {
-            show,
+            active,
             transition,
         } = this.props;
 
         this._isMounted = false;
 
-        if (show || (transition && !this.state.exited)) {
+        if (active || (transition && !this.state.exited)) {
             this.onHide();
         }
     };
@@ -245,7 +243,9 @@ class Modal extends Component {
             <div
                 ref={loaderRef}
                 style={loaderStyle}
-                className={loaderClassName}
+                className={cn(loaderClassName, {
+                    in: this.props.active,
+                })}
             >
                 <div
                     className={`${loaderIconClassName}`} />
@@ -255,14 +255,16 @@ class Modal extends Component {
         if (Transition) {
             loader = (
                 <Transition
-                    in={this.props.show}
+                    in={this.props.active}
                     timeout={loaderTransitionTimeout}
                 >
                     {
                         renderLoader({
                             ref: loaderRef,
                             style: loaderStyle,
-                            className: loaderClassName,
+                            className: cn(loaderClassName, {
+                                in: this.props.active,
+                            }),
                             loaderIconClassName,
                         })
                     }
@@ -288,21 +290,25 @@ class Modal extends Component {
             <div
                 ref={backdropRef}
                 style={backdropStyle}
-                className={backdropClassName}
+                className={cn(backdropClassName, {
+                    in: this.props.active,
+                })}
                 onClick={this.handleBackdropClick} />
         );
 
         if (Transition) {
             backdrop = (
                 <Transition
-                    in={this.props.show}
+                    in={this.props.active}
                     timeout={backdropTransitionTimeout}
                 >
                     {
                         renderBackdrop({
                             ref: backdropRef,
                             style: backdropStyle,
-                            className: backdropClassName,
+                            className: cn(backdropClassName, {
+                                in: this.props.active,
+                            }),
                             onClick: this.handleBackdropClick,
                         })
                     }
@@ -319,7 +325,7 @@ class Modal extends Component {
 
         this.props.manager.add(this, container, this.props.containerClassName);
 
-        this.focus();
+        // this.focus();
 
         if (this.props.onShow) {
             this.props.onShow();
@@ -338,7 +344,7 @@ class Modal extends Component {
     handleHidden = (...args) => {
         this.setState({
             exited: true,
-            loaded: !this.props.show,
+            loaded: !this.props.active,
         });
         this.onHide();
 
@@ -399,14 +405,14 @@ class Modal extends Component {
                 warning(false, 'The modal content node does not accept focus. For the benefit of assistive technologies, the tabIndex of the node is being set to "-1".');
             }
 
-            modalContent.focus();
+            // modalContent.focus();
         }
     };
 
     restoreLastFocus = () => {
         // Support: <=IE11 doesn't support `focus()` on svg elements (RB: #917)
         if (this.lastFocus && this.lastFocus.focus) {
-            this.lastFocus.focus();
+            // this.lastFocus.focus();
             this.lastFocus = null;
         }
     };
@@ -424,7 +430,7 @@ class Modal extends Component {
         const modal = this.getDialogElement();
 
         if (modal && modal !== active && !contains(modal, active)) {
-            modal.focus();
+            // modal.focus();
         }
     };
 
@@ -439,7 +445,7 @@ class Modal extends Component {
 
     render = () => {
         const {
-            show,
+            active,
             container,
             children,
             transition: Transition,
@@ -462,7 +468,7 @@ class Modal extends Component {
         let dialog = React.Children.only(children);
         const filterProps = this.omitProps(this.props, Modal.propTypes);
 
-        const mountModal = show || (Transition && !this.state.exited);
+        const mountModal = active || (Transition && !this.state.exited);
         if (!mountModal) {
             return null;
         }
@@ -471,8 +477,8 @@ class Modal extends Component {
 
         if ((role === undefined) || (tabIndex === undefined)) {
             dialog = cloneElement(dialog, {
-                role: role === undefined ? 'document' : role,
-                tabIndex: tabIndex === null ? '-1' : tabIndex,
+                role: role ? 'document' : role,
+                tabIndex: tabIndex ? '-1' : tabIndex,
             });
         }
 
@@ -481,7 +487,7 @@ class Modal extends Component {
                 <Transition
                     transitionAppear
                     unmountOnExit
-                    in={show && loaded}
+                    in={active}
                     timeout={dialogTransitionTimeout}
                     onExit={onExit}
                     onExiting={onExiting}
@@ -508,7 +514,7 @@ class Modal extends Component {
                     className={className}
                 >
                     {
-                        show &&
+                        active &&
                         <AttachHandler
                             target={'window'}
                             events={{
@@ -525,7 +531,7 @@ class Modal extends Component {
                     }
                     { backdrop && this.renderBackdrop() }
                     { loader && !loaded && this.renderLoader() }
-                    { dialog }
+                    { loaded && dialog }
                 </div>
             </Teleport>
         );
@@ -533,4 +539,6 @@ class Modal extends Component {
 }
 
 Modal.Manager = ModalManager;
-export default Modal;
+export default DelayRenderFactory({ delay: 100 })(Modal);
+
+export { modalManager as ModalManagerProp };

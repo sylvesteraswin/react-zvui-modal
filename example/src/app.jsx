@@ -72,6 +72,7 @@ class App extends Component {
     openDynamic = () => {
         this.setState({
             openDynamic: true,
+            content: null,
         }, () => {
             if (this.props.enableLoading) {
                 setTimeout(() => {
@@ -79,7 +80,7 @@ class App extends Component {
                         loaded: true,
                         content: LOADED_CONTENT,
                     });
-                }, 1000);
+                }, 2000);
             }
         });
     };
@@ -89,17 +90,15 @@ class App extends Component {
             <section
                 className="app">
                 <ZvuiModal
-                    medium
-                    show={this.state.openStatic}
+                    active={this.state.openStatic}
                     onHide={this.close}>
                     {this.state.content}
                 </ZvuiModal>
-
                 <ZvuiModal
-                    medium
+                    full={false}
                     loader={this.props.enableLoading}
                     loadComplete={this.state.loaded}
-                    show={this.state.openDynamic}
+                    active={this.state.openDynamic}
                     onHide={this.close}>
                     {this.state.content}
                 </ZvuiModal>

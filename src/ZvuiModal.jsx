@@ -6,7 +6,7 @@ import cn from 'classnames';
 
 import AttachHandler from 'react-attach-handler'; //eslint-disable-line no-unused-vars
 
-import BaseModal from './base/Modal';
+import BaseModal, { ModalManagerProp } from './base/Modal'; // eslint-disable-line no-unused-vars
 import isOverflowing from './base/isOverflowing'; //eslint-disable-line no-unused-vars
 
 import { ownerDocument, canUseDom, scrollbarSize } from './base/helpers'; //eslint-disable-line no-unused-vars
@@ -18,7 +18,7 @@ import ZvuiModalFade from './components/ZvuiModalFade';
 
 const baseIndex = {};
 const PREFIX = 'zvui-modal';
-const TRANSITION_DURATION = 300;
+const TRANSITION_DURATION = 500;
 const BACKDROP_TRANSITION_DURATION = 150;
 
 let getZIndex;
@@ -38,7 +38,7 @@ class ZvuiModal extends Component {
     getDefaultPrefix = GET_PREFIX;
 
     static propTypes = {
-        show: PropTypes.bool,
+        active: PropTypes.bool,
         // sizes
         small: PropTypes.bool,
         sm: PropTypes.bool,
@@ -72,6 +72,8 @@ class ZvuiModal extends Component {
     };
 
     static defaultProps = {
+        active: false,
+        full: false,
         backdrop: true,
         loader: false,
         loadComplete: false,
@@ -79,7 +81,7 @@ class ZvuiModal extends Component {
         animate: true,
         transition: true,
         container: canUseDom ? document.body : null,
-        manager: BaseModal.defaultProps.manager,
+        manager: ModalManagerProp,
     };
 
     static childContextTypes = {
@@ -146,9 +148,27 @@ class ZvuiModal extends Component {
     };
 
     _show = () => {
-        if (this.props.show) {
+        if (this.props.active) {
             this.setState(this._getStyles);
         }
+    };
+
+    _getViewport = () => {
+        let viewportWidth;
+        let viewportHeight;
+
+        if (typeof window.innerWidth !== 'undefined') {
+            viewportHeight = window.innerHeight;
+            viewportWidth = window.innerWidth;
+        } else {
+            viewportWidth = document.documentElement.clientWidth;
+            viewportHeight = document.documentElement.clientHeight;
+        }
+
+        return {
+            width: viewportWidth,
+            height: viewportHeight,
+        };
     };
 
     _getStyles = () => {
@@ -158,9 +178,14 @@ class ZvuiModal extends Component {
 
         const {
             container,
+            full,
         } = this.props;
 
         const node = findDOMNode(this.dialog);
+        if (!node) {
+            return {};
+        }
+
         const doc = ownerDocument(node);
         const scrollHt = node.scrollHeight;
         const bodyIsOverflowing = isOverflowing(container);
@@ -183,27 +208,38 @@ class ZvuiModal extends Component {
             left: 0,
         };
 
-        if (!modalOverflowHeight) {
+        if (!modalOverflowHeight && !full) {
             marginStyles = {
                 ...marginStyles,
                 top: '50%',
                 marginTop: 0 - innerHeight / 2,
             };
-        } else {
-            marginStyles = {
-                ...marginStyles,
-            };
         }
 
-        if (!modalOverflowWidth) {
+        if (!modalOverflowWidth && !full) {
             marginStyles = {
                 ...marginStyles,
                 left: '50%',
                 marginLeft: 0 - innerWidth / 2,
             };
-        } else {
+        }
+
+        if (modalOverflowWidth || modalOverflowHeight) {
             marginStyles = {
                 ...marginStyles,
+            };
+        }
+
+        if (full) {
+            const {
+                width: viewportWidth,
+                height: viewportHeight,
+            } = this._getViewport() || {};
+
+            marginStyles = {
+                ...marginStyles,
+                minWidth: viewportWidth,
+                minHeight: viewportHeight,
             };
         }
 
@@ -260,7 +296,7 @@ class ZvuiModal extends Component {
                 ref={r => this.dialog = r}
                 style={dialog}
                 className={cn(className, prefix, {
-                    in: props.show && !transition,
+                    in: props.active && !transition,
                 })}
                 onClick={this.props.backdrop ? e => this.handleBackdropClick(e) : null}
             >
@@ -279,14 +315,16 @@ class ZvuiModal extends Component {
                     )}
                 >
                     <div
+                        style={props.full ? {
+                            minHeight: dialogStyle.minHeight,
+                        } : {}}
                         className={`${prefix}-content`}
                     >
-                        {children}
+                        { children }
                     </div>
                 </div>
             </div>
         );
-
 
         return (
             <BaseModal
@@ -299,7 +337,7 @@ class ZvuiModal extends Component {
                 backdrop={props.backdrop}
                 loader={props.loader}
                 loadComplete={props.loadComplete}
-                show={props.show}
+                active={props.active}
                 onHide={props.onHide}
                 onShow={props.onShow}
                 onEnter={onEnter}
@@ -311,20 +349,14 @@ class ZvuiModal extends Component {
                 backdropStyle={backdrop}
                 transition={transition}
                 onResize={this._show}
-                backdropClassName={cn(`${PREFIX}-backdrop`, {
-                    in: props.show,
-                })}
-                loaderClassName={cn(`${PREFIX}-loader`, {
-                    in: props.show,
-                })}
-                loaderIconClassName= {cn(`${PREFIX}-loader-icon`, {
-                    in: props.show,
-                })}
+                backdropClassName={`${PREFIX}-backdrop`}
+                loaderClassName={`${PREFIX}-loader`}
+                loaderIconClassName= {`${PREFIX}-loader-icon`}
                 containerClassName={`${PREFIX}-open`}
                 dialogTransitionTimeout={TRANSITION_DURATION}
                 backdropTransitionTimeout={BACKDROP_TRANSITION_DURATION}
             >
-                {modal}
+                { modal }
             </BaseModal>
         );
     };
