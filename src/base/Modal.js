@@ -180,7 +180,6 @@ class Modal extends Component {
     };
 
     componentDidMount = () => {
-        this._isMounted = true;
         if (this.props.active) {
             this.onShow();
         }
@@ -205,15 +204,9 @@ class Modal extends Component {
             transition,
         } = this.props;
 
-        this._isMounted = false;
-
         if (active || (transition && !this.state.exited)) {
             this.onHide();
         }
-    };
-
-    isMounted = () => {
-        return this._isMounted;
     };
 
     omitProps = (props, propTypes) => {
@@ -422,7 +415,7 @@ class Modal extends Component {
             enforceFocus,
         } = this.props;
 
-        if (!enforceFocus || !this.isMounted() || !this.isTopModal()) {
+        if (!enforceFocus || !this.isTopModal()) {
             return;
         }
 

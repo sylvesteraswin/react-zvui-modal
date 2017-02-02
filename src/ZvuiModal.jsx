@@ -147,10 +147,24 @@ class ZvuiModal extends Component {
         }
     };
 
+    handleExiting = () => {
+        this._removeAttentionClasses();
+
+        if (this.props.onEntering) {
+            this.props.onEntering();
+        }
+    };
+
     _show = () => {
         if (this.props.active) {
             this.setState(this._getStyles);
         }
+    };
+
+    _removeAttentionClasses = () => {
+        this.setState({
+            classes: '',
+        });
     };
 
     _getViewport = () => {
