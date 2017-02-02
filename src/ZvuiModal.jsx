@@ -358,7 +358,7 @@ class ZvuiModal extends Component {
                 onEntering={this.handleEntering}
                 onEntered={onEntered}
                 onExit={onExit}
-                onExsiting={this.handleExiting}
+                onExiting={this.handleExiting}
                 onExited={onExited}
                 backdropStyle={backdrop}
                 transition={transition}

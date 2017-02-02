@@ -504,7 +504,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            onEntering: _this2.handleEntering,
 	            onEntered: onEntered,
 	            onExit: onExit,
-	            onExsiting: _this2.handleExiting,
+	            onExiting: _this2.handleExiting,
 	            onExited: onExited,
 	            backdropStyle: backdrop,
 	            transition: transition,
