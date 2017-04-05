@@ -2775,6 +2775,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        style.paddingRight = parseInt((0, _style2.default)(container, 'paddingRight') || 0, 10) + (0, _helpers.scrollbarSize)() + 'px';
 	    }
 
+	    if (_helpers.canUseDom) {
+	        var _document$documentEle = document.documentElement.getBoundingClientRect(),
+	            top = _document$documentEle.top;
+
+	        style.position = 'fixed';
+	        style.top = top + 'px';
+	        style.width = '100%';
+	        state.style = {
+	            overflow: container.style.overflow,
+	            paddingRight: container.style.paddingRight,
+	            position: null,
+	            top: Math.abs(top) + 'px',
+	            width: 'auto'
+	        };
+	    }
 	    (0, _style2.default)(container, style);
 	};
 
@@ -2869,6 +2884,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                if (this.handleContainerOverflow) {
 	                    removeContainerStyle(data, container);
+	                    if (_helpers.canUseDom) {
+	                        window.scrollTo(0, parseInt(container.style.top));
+	                    }
 	                }
 
 	                if (this.hideSiblingNodes) {

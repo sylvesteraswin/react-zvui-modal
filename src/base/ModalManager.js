@@ -2,8 +2,9 @@ import css from 'dom-helpers/style';
 import classes from 'dom-helpers/class';
 
 import isOverflowing from './isOverflowing';
-import { scrollbarSize as getScrollbarSize } from './helpers';
+import { scrollbarSize as getScrollbarSize, canUseDom } from './helpers';
 import { ariaHidden, hideSiblings, showSiblings } from './manageHidden';
+
 
 
 const findIndexOf = (arr, cb) => {
@@ -39,6 +40,21 @@ const setContainerStyle = (state, container) => {
         style.paddingRight = parseInt(css(container, 'paddingRight') || 0, 10) + getScrollbarSize() + 'px';
     }
 
+    if (canUseDom) {
+        const {
+            top,
+        } = document.documentElement.getBoundingClientRect();
+        style.position = 'fixed';
+        style.top = `${top}px`;
+        style.width = '100%';
+        state.style = {
+            overflow: container.style.overflow,
+            paddingRight: container.style.paddingRight,
+            position: null,
+            top: `${Math.abs(top)}px`,
+            width: 'auto',
+        };
+    }
     css(container, style);
 };
 
@@ -118,6 +134,9 @@ class ModalManager {
 
             if (this.handleContainerOverflow) {
                 removeContainerStyle(data, container);
+                if (canUseDom) {
+                    window.scrollTo(0, parseInt(container.style.top));
+                }
             }
 
             if (this.hideSiblingNodes) {
