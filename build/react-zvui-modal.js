@@ -2722,6 +2722,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _class2 = _interopRequireDefault(_class);
 
+	var _hyphenateStyle = __webpack_require__(9);
+
+	var _hyphenateStyle2 = _interopRequireDefault(_hyphenateStyle);
+
+	var _removeStyle = __webpack_require__(13);
+
+	var _removeStyle2 = _interopRequireDefault(_removeStyle);
+
 	var _isOverflowing = __webpack_require__(27);
 
 	var _isOverflowing2 = _interopRequireDefault(_isOverflowing);
@@ -2787,7 +2795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            paddingRight: container.style.paddingRight,
 	            position: null,
 	            top: Math.abs(top) + 'px',
-	            width: 'auto'
+	            width: null
 	        };
 	    }
 	    (0, _style2.default)(container, style);
@@ -2797,7 +2805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var style = _ref.style;
 
 	    Object.keys(style).forEach(function (key) {
-	        return container.style[key] = style[key];
+	        (0, _removeStyle2.default)(container, key);
 	    });
 	};
 
@@ -2883,9 +2891,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                data.classes.forEach(_class2.default.removeClass.bind(null, container));
 
 	                if (this.handleContainerOverflow) {
+	                    var scrollTo = container.style.top;
 	                    removeContainerStyle(data, container);
 	                    if (_helpers.canUseDom) {
-	                        window.scrollTo(0, parseInt(container.style.top));
+	                        window.scrollTo(0, Math.abs(parseInt(scrollTo)));
 	                    }
 	                }
 
