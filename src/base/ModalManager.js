@@ -1,5 +1,7 @@
 import css from 'dom-helpers/style';
 import classes from 'dom-helpers/class';
+import hyphenateStyle from 'dom-helpers/util/hyphenateStyle';
+import removeStyle from 'dom-helpers/style/removeStyle';
 
 import isOverflowing from './isOverflowing';
 import { scrollbarSize as getScrollbarSize, canUseDom } from './helpers';
@@ -52,7 +54,7 @@ const setContainerStyle = (state, container) => {
             paddingRight: container.style.paddingRight,
             position: null,
             top: `${Math.abs(top)}px`,
-            width: 'auto',
+            width: null,
         };
     }
     css(container, style);
@@ -60,7 +62,9 @@ const setContainerStyle = (state, container) => {
 
 const removeContainerStyle = ({ style }, container) => {
     Object.keys(style)
-        .forEach(key => container.style[key] = style[key]);
+        .forEach(key => {
+            removeStyle(container, key);
+        });
 };
 
 // State management for container and modals in those containers
@@ -133,9 +137,10 @@ class ModalManager {
             data.classes.forEach(classes.removeClass.bind(null, container));
 
             if (this.handleContainerOverflow) {
+                const scrollTo = container.style.top;
                 removeContainerStyle(data, container);
                 if (canUseDom) {
-                    window.scrollTo(0, parseInt(container.style.top));
+                    window.scrollTo(0, Math.abs(parseInt(scrollTo)));
                 }
             }
 
