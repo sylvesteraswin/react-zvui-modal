@@ -1,16 +1,14 @@
 {
   "name": "react-zvui-modal",
   "moduleName": "ZvuiModal",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "React zvui modal component forked from react-overlay.",
   "main": "build/react-zvui-modal",
   "browser": "build/react-zvui-modal",
   "devServer": {
     "host": "0.0.0.0",
     "port": 4002,
-    "root": [
-      "example"
-    ],
+    "root": ["example"],
     "livereload": true
   },
   "exampleConfig": {
@@ -21,7 +19,13 @@
     "build": "NODE_ENV=production gulp build",
     "clean-gh": "git push origin --delete gh-pages",
     "create-gh": "npm run clean-gh && git subtree push --prefix example origin gh-pages",
-    "postpublish": "git tag $npm_package_version && git push origin --tags"
+    "postpublish": "git tag $npm_package_version && git push origin --tags",
+    "eslint": "eslint packages --ext js,jsx",
+    "eslint-fix": "eslint --fix packages --ext js,jsx",
+    "fix": "npm run format && npm run eslint-fix",
+    "format-check": "git ls-files --directory src | egrep '\\.jsx?$' | xargs prettier -l --print-width 80 --tab-width 2 --trailing-comma all --single-quote",
+    "format": "git ls-files --directory src | egrep '\\.jsx?$' | xargs prettier --write --print-width 80 --tab-width 2 --trailing-comma all --single-quote",
+    "lint": "npm run format-check && npm run eslint"
   },
   "repository": {
     "type": "git",
@@ -100,6 +104,7 @@
     "node-sass": "^4.5.2",
     "opn": "^5.0.0",
     "postcss-loader": "^2.0.5",
+    "prettier": "1.4.4",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-router": "^4.1.1",

@@ -1,56 +1,67 @@
 import webpack from 'webpack';
 import pkg from './package.json';
 import camelCase from 'camelcase';
-import ExtractTextPlugin from "extract-text-webpack-plugin";
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
-const capitalizeFirstLetter = (string) => {
+const capitalizeFirstLetter = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
 const webpackConfig = {
   output: {
     filename: `${pkg.name}.js`,
-    library: capitalizeFirstLetter(camelCase(pkg.name)),
     library: pkg.moduleName,
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
   externals: {
     react: {
       root: 'React',
       commonjs: 'react',
       commonjs2: 'react',
-      amd: 'react'
+      amd: 'react',
     },
     'react-dom': {
       root: 'ReactDOM',
       commonjs: 'react-dom',
       commonjs2: 'react-dom',
-      amd: 'react-dom'
-    }
+      amd: 'react-dom',
+    },
   },
   module: {
-    loaders: [{
-      test: /\.(js|jsx)$/,
-      exclude: /(node_modules)/,
-      loader: 'babel'
-    }, {
-      test: /\.(scss|css)$/,
-      loader: ExtractTextPlugin.extract("style-loader", "css-loader")
-    }]
+    loaders: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /(node_modules)/,
+        loader: 'babel-loader',
+      },
+      {
+        test: /\.(scss|css)$/,
+        loader: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+            },
+          ],
+        }),
+      },
+    ],
   },
   resolve: {
-    modulesDirectories: ['node_modules', 'bower_components'],
-    extensions: ['', '.jsx', '.js']
+    modules: ['node_modules', 'bower_components'],
+    extensions: ['.jsx', '.js'],
   },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-      }
+        NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+      },
     }),
-    new webpack.optimize.DedupePlugin(),
-    new ExtractTextPlugin(`${pkg.name}.css`, {allChunks: false})
-  ]
+    new ExtractTextPlugin({
+      filename: `${pkg.name}.css`,
+      allChunks: false,
+    }),
+  ],
 };
 
 export default webpackConfig;

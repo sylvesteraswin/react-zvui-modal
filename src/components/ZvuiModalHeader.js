@@ -1,58 +1,59 @@
-import React, { PropTypes, Component } from 'react'; // eslint-disable-line no-unused-vars
+import React, { Component } from 'react'; // eslint-disable-line no-unused-vars
+import PropTypes from 'prop-types';
 import cn from 'classnames';
 
 import ZvuiModalDismiss from './ZvuiModalDismiss'; // eslint-disable-line no-unused-vars
 
 class ZvuiModalHeader extends Component {
-    static propType = {
-        closeButton: PropTypes.bool,
-        modalPrefix: PropTypes.string,
-    };
+  static propType = {
+    closeButton: PropTypes.bool,
+    modalPrefix: PropTypes.string,
+  };
 
-    static defaultProps = {
-        closeButton: false,
-    };
+  static defaultProps = {
+    closeButton: false,
+  };
 
-    static contextTypes = {
-        onModalHide: PropTypes.func,
-        getDefaultPrefix: PropTypes.func,
-        outside: PropTypes.bool,
-    }
+  static contextTypes = {
+    onModalHide: PropTypes.func,
+    getDefaultPrefix: PropTypes.func,
+    outside: PropTypes.bool,
+  };
 
-    render = () => {
-        const {
-            modalPrefix,
-            closeButton,
-            children,
-            className,
-            ...props
-        } = this.props;
+  render = () => {
+    const {
+      modalPrefix,
+      closeButton,
+      children,
+      className,
+      ...props
+    } = this.props;
 
-        const {
-            outside,
-        } = this.context;
+    const { outside } = this.context;
 
-        const prefix = modalPrefix || this.context.getDefaultPrefix();
+    const prefix = modalPrefix || this.context.getDefaultPrefix();
 
-        return (
-            <div
-                {...props}
-                className={cn(className, `${prefix}-header`)}
-            >
-                {
-                    closeButton &&
-                    <ZvuiModalDismiss
-                        className={cn(`${prefix}-close`, {
-                            'outside': !children || (props.outside && outside),
-                        })}
-                    >
-                        <span>&times;</span>
-                    </ZvuiModalDismiss>
-                }
-                {children}
-            </div>
-        );
-    };
+    return (
+      <div {...props} className={cn(className, `${prefix}-header`)}>
+        {closeButton &&
+          <ZvuiModalDismiss
+            className={cn(`${prefix}-close`, {
+              outside: !children || (props.outside && outside),
+            })}
+          >
+            <span>&times;</span>
+          </ZvuiModalDismiss>}
+        {children}
+      </div>
+    );
+  };
 }
+
+ZvuiModalHeader.propTypes = {
+  className: PropTypes.string,
+  children: PropTypes.any,
+  modalPrefix: PropTypes.string,
+  closeButton: PropTypes.bool,
+};
 
 export default ZvuiModalHeader;
