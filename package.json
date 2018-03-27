@@ -1,7 +1,7 @@
 {
   "name": "react-zvui-modal",
   "moduleName": "ZvuiModal",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "React zvui modal component forked from react-overlay.",
   "main": "build/react-zvui-modal",
   "browser": "build/react-zvui-modal",
